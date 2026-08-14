@@ -15,7 +15,11 @@ describe('AppLayout', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('link', { name: 'Oposiciones' })).toHaveAttribute('href', '/')
+    expect(screen.getByRole('link', { name: 'OpoData' })).toHaveAttribute('href', '/')
+    expect(screen.getByText('Entiende tus oposiciones, no solo tu nota.')).toBeInTheDocument()
     expect(screen.getByText('Page content')).toBeInTheDocument()
+    expect(
+      screen.getByText('Información organizada para entender mejor los procesos selectivos docentes.'),
+    ).toBeInTheDocument()
   })
 })

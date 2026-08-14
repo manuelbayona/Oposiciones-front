@@ -15,7 +15,7 @@ describe('App', () => {
 
     render(<App />)
 
-    expect(screen.getByRole('link', { name: 'Oposiciones' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'OpoData' })).toBeInTheDocument()
     await waitFor(() =>
       expect(screen.getByText('No hay convocatorias disponibles todavía.')).toBeInTheDocument(),
     )
