@@ -4,36 +4,38 @@ import { ErrorMessage, StateMessage } from '../../../shared/components/StateMess
 import { SpecialitySelector } from '../../specialities/components/SpecialitySelector'
 import { TribunalSelector } from '../../tribunals/components/TribunalSelector'
 import { ConvocationSelector } from './ConvocationSelector'
-import { useConvocations } from '../queries'
+import { useConvocationYears } from '../queries'
 
 export function ConvocationPicker() {
-  const [convocationId, setConvocationId] = useState('')
-  const [specialityId, setSpecialityId] = useState('')
-  const [tribunalId, setTribunalId] = useState('')
+  const [convocationYear, setConvocationYear] = useState('')
+  const [specialty, setSpecialty] = useState('')
+  const [tribunalNumber, setTribunalNumber] = useState('')
   const navigate = useNavigate()
-  const { data, isLoading, isError, refetch } = useConvocations()
+  const { data, isLoading, isError, refetch } = useConvocationYears()
 
-  function handleConvocationChange(nextConvocationId: string) {
-    setConvocationId(nextConvocationId)
-    setSpecialityId('')
-    setTribunalId('')
+  function handleConvocationChange(nextConvocationYear: string) {
+    setConvocationYear(nextConvocationYear)
+    setSpecialty('')
+    setTribunalNumber('')
   }
 
-  function handleSpecialityChange(nextSpecialityId: string) {
-    setSpecialityId(nextSpecialityId)
-    setTribunalId('')
+  function handleSpecialtyChange(nextSpecialty: string) {
+    setSpecialty(nextSpecialty)
+    setTribunalNumber('')
   }
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    if (!convocationId || !specialityId || !tribunalId) {
+    if (!convocationYear || !specialty || !tribunalNumber) {
       return
     }
-    navigate(`/convocations/${convocationId}/specialities/${specialityId}/tribunals/${tribunalId}`)
+    navigate(
+      `/convocations/${encodeURIComponent(convocationYear)}/specialities/${encodeURIComponent(specialty)}/tribunals/${encodeURIComponent(tribunalNumber)}`,
+    )
   }
 
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0
-  const canSubmit = Boolean(convocationId && specialityId && tribunalId)
+  const canSubmit = Boolean(convocationYear && specialty && tribunalNumber)
 
   return (
     <section id="consultar" className="scroll-mt-6 rounded-lg border border-slate-200 bg-white p-6">
@@ -54,17 +56,17 @@ export function ConvocationPicker() {
       {!isError && !isEmpty && (
         <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <ConvocationSelector value={convocationId} onChange={handleConvocationChange} />
+            <ConvocationSelector value={convocationYear} onChange={handleConvocationChange} />
             <SpecialitySelector
-              convocationId={convocationId || undefined}
-              value={specialityId}
-              onChange={handleSpecialityChange}
+              convocationYear={convocationYear || undefined}
+              value={specialty}
+              onChange={handleSpecialtyChange}
             />
             <TribunalSelector
-              convocationId={convocationId || undefined}
-              specialityId={specialityId || undefined}
-              value={tribunalId}
-              onChange={setTribunalId}
+              convocationYear={convocationYear || undefined}
+              specialty={specialty || undefined}
+              value={tribunalNumber}
+              onChange={setTribunalNumber}
             />
           </div>
           <button

@@ -29,29 +29,21 @@ describe('ConvocationPicker', () => {
     vi.unstubAllGlobals()
   })
 
-  it('disables the submit button until a convocation, speciality and tribunal are chosen', async () => {
+  it('disables the submit button until a convocation, specialty and tribunal are chosen', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockImplementation((url: string) => {
-        if (url.includes('/tribunals')) {
+        if (url.includes('/tribunal-numbers')) {
+          return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(['25']) })
+        }
+        if (url.includes('/specialties')) {
           return Promise.resolve({
             ok: true,
             status: 200,
-            json: () => Promise.resolve([{ id: 't25', name: 'Tribunal 25' }]),
+            json: () => Promise.resolve(['EDUCACIÓN INFANTIL']),
           })
         }
-        if (url.includes('/specialities')) {
-          return Promise.resolve({
-            ok: true,
-            status: 200,
-            json: () => Promise.resolve([{ id: 's-infantil', name: 'Educación Infantil' }]),
-          })
-        }
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => Promise.resolve([{ id: 'c2026', name: '2026 - Maestros', year: 2026 }]),
-        })
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([2026]) })
       }),
     )
 
@@ -61,46 +53,42 @@ describe('ConvocationPicker', () => {
     const submit = screen.getByRole('button', { name: 'Ver aspirantes' })
     expect(submit).toBeDisabled()
 
-    await waitFor(() => expect(screen.getByText('2026 - Maestros')).toBeInTheDocument())
-    await user.selectOptions(screen.getByLabelText('Convocatoria'), 'c2026')
-    await waitFor(() => expect(screen.getByText('Educación Infantil')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('2026')).toBeInTheDocument())
+    await user.selectOptions(screen.getByLabelText('Convocatoria'), '2026')
+    await waitFor(() => expect(screen.getByText('EDUCACIÓN INFANTIL')).toBeInTheDocument())
     expect(submit).toBeDisabled()
 
-    await user.selectOptions(screen.getByLabelText('Especialidad'), 's-infantil')
-    await waitFor(() => expect(screen.getByText('Tribunal 25')).toBeInTheDocument())
+    await user.selectOptions(screen.getByLabelText('Especialidad'), 'EDUCACIÓN INFANTIL')
+    await waitFor(() => expect(screen.getByText('25')).toBeInTheDocument())
     expect(submit).toBeDisabled()
 
-    await user.selectOptions(screen.getByLabelText('Tribunal'), 't25')
+    await user.selectOptions(screen.getByLabelText('Tribunal'), '25')
     expect(submit).toBeEnabled()
 
     await user.click(submit)
 
     await waitFor(() =>
       expect(screen.getByTestId('location')).toHaveTextContent(
-        '/convocations/c2026/specialities/s-infantil/tribunals/t25',
+        '/convocations/2026/specialities/EDUCACI%C3%93N%20INFANTIL/tribunals/25',
       ),
     )
   })
 
-  it('resets the speciality and tribunal selection when the convocation changes', async () => {
+  it('resets the specialty and tribunal selection when the convocation changes', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockImplementation((url: string) => {
-        if (url.includes('/specialities')) {
+        if (url.includes('/specialties')) {
           return Promise.resolve({
             ok: true,
             status: 200,
-            json: () => Promise.resolve([{ id: 's-infantil', name: 'Educación Infantil' }]),
+            json: () => Promise.resolve(['EDUCACIÓN INFANTIL']),
           })
         }
         return Promise.resolve({
           ok: true,
           status: 200,
-          json: () =>
-            Promise.resolve([
-              { id: 'c2026', name: '2026 - Maestros', year: 2026 },
-              { id: 'c2024', name: '2024 - Maestros', year: 2024 },
-            ]),
+          json: () => Promise.resolve([2026, 2024]),
         })
       }),
     )
@@ -108,12 +96,12 @@ describe('ConvocationPicker', () => {
     const user = userEvent.setup()
     renderPicker()
 
-    await waitFor(() => expect(screen.getByText('2026 - Maestros')).toBeInTheDocument())
-    await user.selectOptions(screen.getByLabelText('Convocatoria'), 'c2026')
-    await waitFor(() => expect(screen.getByText('Educación Infantil')).toBeInTheDocument())
-    await user.selectOptions(screen.getByLabelText('Especialidad'), 's-infantil')
+    await waitFor(() => expect(screen.getByText('2026')).toBeInTheDocument())
+    await user.selectOptions(screen.getByLabelText('Convocatoria'), '2026')
+    await waitFor(() => expect(screen.getByText('EDUCACIÓN INFANTIL')).toBeInTheDocument())
+    await user.selectOptions(screen.getByLabelText('Especialidad'), 'EDUCACIÓN INFANTIL')
 
-    await user.selectOptions(screen.getByLabelText('Convocatoria'), 'c2024')
+    await user.selectOptions(screen.getByLabelText('Convocatoria'), '2024')
 
     expect(screen.getByLabelText<HTMLSelectElement>('Especialidad').value).toBe('')
   })

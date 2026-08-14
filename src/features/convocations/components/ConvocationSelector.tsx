@@ -1,13 +1,13 @@
 import { LabeledSelect } from '../../../shared/components/LabeledSelect'
-import { useConvocations } from '../queries'
+import { useConvocationYears } from '../queries'
 
 interface ConvocationSelectorProps {
   value: string
-  onChange: (convocationId: string) => void
+  onChange: (convocationYear: string) => void
 }
 
 export function ConvocationSelector({ value, onChange }: ConvocationSelectorProps) {
-  const { data, isLoading } = useConvocations()
+  const { data, isLoading } = useConvocationYears()
 
   return (
     <LabeledSelect
@@ -17,9 +17,9 @@ export function ConvocationSelector({ value, onChange }: ConvocationSelectorProp
       onChange={onChange}
       loading={isLoading}
       placeholder="Selecciona convocatoria"
-      options={(data ?? []).map((convocation) => ({
-        value: convocation.id,
-        label: convocation.name,
+      options={(data ?? []).map((year) => ({
+        value: String(year),
+        label: String(year),
       }))}
     />
   )

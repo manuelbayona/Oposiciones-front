@@ -9,17 +9,13 @@ describe('ConvocationSelector', () => {
     vi.unstubAllGlobals()
   })
 
-  it('loads convocations and reports the selected id', async () => {
+  it('loads convocation years and reports the selected year', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
         ok: true,
         status: 200,
-        json: () =>
-          Promise.resolve([
-            { id: 'c2026', name: '2026 - Maestros', year: 2026 },
-            { id: 'c2024', name: '2024 - Maestros', year: 2024 },
-          ]),
+        json: () => Promise.resolve([2026, 2024]),
       }),
     )
 
@@ -27,10 +23,10 @@ describe('ConvocationSelector', () => {
     const user = userEvent.setup()
     renderWithQueryClient(<ConvocationSelector value="" onChange={onChange} />)
 
-    await waitFor(() => expect(screen.getByText('2026 - Maestros')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('2026')).toBeInTheDocument())
 
-    await user.selectOptions(screen.getByLabelText('Convocatoria'), 'c2024')
+    await user.selectOptions(screen.getByLabelText('Convocatoria'), '2024')
 
-    expect(onChange).toHaveBeenCalledWith('c2024')
+    expect(onChange).toHaveBeenCalledWith('2024')
   })
 })

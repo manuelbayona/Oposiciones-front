@@ -8,31 +8,34 @@ describe('SpecialitySelector', () => {
     vi.unstubAllGlobals()
   })
 
-  it('is disabled and does not fetch when no convocation is selected', () => {
+  it('is disabled and does not fetch when no convocation year is selected', () => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
 
     renderWithQueryClient(
-      <SpecialitySelector convocationId={undefined} value="" onChange={vi.fn()} />,
+      <SpecialitySelector convocationYear={undefined} value="" onChange={vi.fn()} />,
     )
 
     expect(screen.getByLabelText('Especialidad')).toBeDisabled()
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('fetches and lists specialities scoped to the selected convocation', async () => {
+  it('fetches and lists specialties scoped to the selected convocation year', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => Promise.resolve([{ id: 's-infantil', name: 'Educación Infantil' }]),
+      json: () => Promise.resolve(['EDUCACIÓN INFANTIL']),
     })
     vi.stubGlobal('fetch', fetchMock)
 
-    renderWithQueryClient(<SpecialitySelector convocationId="c2026" value="" onChange={vi.fn()} />)
+    renderWithQueryClient(
+      <SpecialitySelector convocationYear="2026" value="" onChange={vi.fn()} />,
+    )
 
-    await waitFor(() => expect(screen.getByText('Educación Infantil')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('EDUCACIÓN INFANTIL')).toBeInTheDocument())
 
     const requestedUrl = String(fetchMock.mock.calls[0][0])
-    expect(requestedUrl).toContain('/convocations/c2026/specialities')
+    expect(requestedUrl).toContain('/participations/specialties')
+    expect(requestedUrl).toContain('convocationYear=2026')
   })
 })

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchConvocations } from './api/convocationsApi'
+import { fetchConvocationYears } from './api/convocationsApi'
 
-export function useConvocations() {
+export function useConvocationYears() {
   return useQuery({
-    queryKey: ['convocations'],
-    queryFn: fetchConvocations,
+    queryKey: ['convocationYears'],
+    queryFn: fetchConvocationYears,
     staleTime: 5 * 60 * 1000,
   })
 }

@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchSpecialities } from './api/specialitiesApi'
+import { fetchSpecialties } from './api/specialitiesApi'
 
-export function useSpecialities(convocationId: string | undefined) {
+export function useSpecialties(convocationYear: string | undefined) {
   return useQuery({
-    queryKey: ['specialities', convocationId],
-    queryFn: () => fetchSpecialities(convocationId!),
-    enabled: Boolean(convocationId),
+    queryKey: ['specialties', convocationYear],
+    queryFn: () => fetchSpecialties(convocationYear!),
+    enabled: Boolean(convocationYear),
     staleTime: 5 * 60 * 1000,
   })
 }
