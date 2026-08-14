@@ -4,37 +4,37 @@ import { StateMessage } from '../../../shared/components/StateMessage'
 import { CandidateResultsSection } from '../components/CandidateResultsSection'
 
 export function CandidatesExplorerPage() {
-  const { convocationId, specialityId, tribunalId } = useParams()
+  const { convocationYear, specialty, tribunalNumber } = useParams()
   const navigate = useNavigate()
 
-  const hasFullSelection = Boolean(convocationId && specialityId && tribunalId)
+  const hasFullSelection = Boolean(convocationYear && specialty && tribunalNumber)
 
-  function handleSelectCandidate(candidateId: string, contextParams: URLSearchParams) {
-    navigate(`/candidates/${candidateId}?${contextParams.toString()}`)
+  function handleSelectCandidate(maskedIdentifier: string, contextParams: URLSearchParams) {
+    navigate(`/candidates/${encodeURIComponent(maskedIdentifier)}?${contextParams.toString()}`)
   }
 
   return (
     <div className="flex flex-col gap-4">
       <SelectionBar
-        convocationId={convocationId}
-        specialityId={specialityId}
-        tribunalId={tribunalId}
+        convocationYear={convocationYear}
+        specialty={specialty}
+        tribunalNumber={tribunalNumber}
       />
 
-      {!convocationId && <StateMessage title="Selecciona una convocatoria para comenzar." />}
-      {convocationId && !specialityId && (
+      {!convocationYear && <StateMessage title="Selecciona una convocatoria para comenzar." />}
+      {convocationYear && !specialty && (
         <StateMessage title="Selecciona una especialidad para continuar." />
       )}
-      {convocationId && specialityId && !tribunalId && (
+      {convocationYear && specialty && !tribunalNumber && (
         <StateMessage title="Selecciona un tribunal para ver el listado de aspirantes." />
       )}
 
       {hasFullSelection && (
         <CandidateResultsSection
-          key={`${convocationId}-${specialityId}-${tribunalId}`}
-          convocationId={convocationId!}
-          specialityId={specialityId!}
-          tribunalId={tribunalId!}
+          key={`${convocationYear}-${specialty}-${tribunalNumber}`}
+          convocationYear={Number(convocationYear)}
+          specialty={specialty!}
+          tribunalNumber={tribunalNumber!}
           onSelectCandidate={handleSelectCandidate}
         />
       )}

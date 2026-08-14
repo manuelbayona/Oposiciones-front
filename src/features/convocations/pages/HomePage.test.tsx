@@ -38,13 +38,17 @@ describe('HomePage', () => {
     renderHomePage()
 
     expect(
-      screen.getByRole('heading', { name: 'Todos los resultados de la oposición, en un solo lugar' }),
+      screen.getByRole('heading', {
+        name: 'Todos los resultados de la oposición, en un solo lugar',
+      }),
     ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Consultar resultados' })).toHaveAttribute(
       'href',
       '#consultar',
     )
-    expect(screen.getByRole('heading', { name: '¿Cómo ha evolucionado un aspirante?' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: '¿Cómo ha evolucionado un aspirante?' }),
+    ).toBeInTheDocument()
   })
 
   it('shows a message in the picker when there are no convocations available', async () => {

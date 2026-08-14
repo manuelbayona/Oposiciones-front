@@ -1,89 +1,65 @@
-import type { CandidateStatus } from './candidateStatus'
-
-export interface CandidateListColumn {
-  key: string
-  label: string
-  sortable: boolean
-}
-
+/** Matches GET /api/v1/candidates — search-by-name result, per CandidateSummaryResponse. */
 export interface CandidateSummary {
-  id: string
-  position: number | null
+  maskedIdentifier: string
   fullName: string
-  status: CandidateStatus
-  /** Dynamic score values keyed by CandidateListColumn.key, e.g. "partA", "oppositionScore", "finalScore". */
-  scores: Record<string, number | null>
-  hasPosition: boolean | null
 }
 
-export interface CandidateListResponse {
-  columns: CandidateListColumn[]
-  items: CandidateSummary[]
-  totalCount: number
-  page: number
-  pageSize: number
-  totalPages: number
+export interface CandidateSearchParams {
+  name?: string
+  specialty?: string
+  tribunalNumber?: string
+  convocationYear?: number
 }
 
-export interface CandidateListParams {
-  convocationId: string
-  specialityId: string
-  tribunalId: string
-  search?: string
-  sort?: string
-  page?: number
-  size?: number
-}
-
+/** A single score, kept as both the raw source text and its normalized numeric form — see ScoreValue on the backend. */
 export interface ScoreItem {
-  key: string
-  label: string
+  rawValue: string
   value: number | null
-  status?: CandidateStatus
 }
 
-export interface ScoreSection {
-  key: string
-  label: string
-  items: ScoreItem[]
-  total: ScoreItem | null
+/** One part's score within an exam result (e.g. "A"/"B" for a two-part exam, "unica" for a single-mark one) — see ADR-007 on the backend. */
+export interface ExamPartItem {
+  partCode: string
+  score: ScoreItem
 }
 
-export interface MeritItem {
-  key: string
-  label: string
-  value: number | null
-  children?: MeritItem[]
+/** Matches ExamResultItem in CandidateResultsResponse. */
+export interface ExamResultItem {
+  sourceDocument: string
+  documentType: string
+  examName: string
+  body: string
+  specialty: string
+  tribunalNumber: string
+  accessCode: string
+  parts: ExamPartItem[]
+  totalScore: ScoreItem
+  attendanceStatus: string
+  valid: boolean
+  extractorVersion: string
+  processedAt: string
 }
 
-export interface CandidateResult {
-  oppositionScore: number | null
-  meritsScore: number | null
-  finalScore: number | null
-  position: number | null
-  hasPosition: boolean | null
-}
-
-export interface CandidateSource {
-  title: string
-  date: string | null
-}
-
-export interface CandidateContext {
-  id: string
-  name: string
-}
-
-export interface CandidateDetail {
-  id: string
+/** Matches GET /api/v1/candidates/{maskedIdentifier}/results. */
+export interface CandidateResultsResponse {
+  maskedIdentifier: string
   fullName: string
-  convocation: CandidateContext
-  speciality: CandidateContext
-  tribunal: CandidateContext
-  status: CandidateStatus
-  scoreSections: ScoreSection[]
-  merits: MeritItem[] | null
-  meritsTotal: number | null
-  result: CandidateResult
-  source: CandidateSource | null
+  results: ExamResultItem[]
+}
+
+/** Matches ParticipationItem in CandidateParticipationsResponse. */
+export interface ParticipationItem {
+  convocationYear: number
+  convocationCode: string | null
+  body: string
+  specialty: string
+  tribunalNumber: string
+  totalMeritScore: number | null
+}
+
+/** Matches GET /api/v1/candidates/{maskedIdentifier}/participations. */
+export interface CandidateParticipationsResponse {
+  maskedIdentifier: string
+  fullName: string
+  participations: ParticipationItem[]
 }

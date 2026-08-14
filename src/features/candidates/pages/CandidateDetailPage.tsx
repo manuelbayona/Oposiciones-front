@@ -1,71 +1,86 @@
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useCandidateDetail, useCandidateList } from '../queries/candidateQueries'
-import { CandidateStatusBadge } from '../components/CandidateStatusBadge'
-import { CandidateScores } from '../components/CandidateScores'
-import { CandidateMerits } from '../components/CandidateMerits'
-import { CandidateResult } from '../components/CandidateResult'
-import { CandidateSourceInfo } from '../components/CandidateSourceInfo'
+import {
+  useCandidateParticipations,
+  useCandidateResults,
+  useCandidateSearch,
+} from '../queries/candidateQueries'
+import { CandidateParticipations } from '../components/CandidateParticipations'
+import { CandidateExamResults } from '../components/CandidateExamResults'
 import { CandidateNavigation } from '../components/CandidateNavigation'
 import { ErrorMessage, StateMessage } from '../../../shared/components/StateMessage'
-import { parseSort, serializeSort } from '../model/sort'
-import { CANDIDATE_LIST_PAGE_SIZE } from '../model/constants'
 import { NotFoundError } from '../../../shared/api/errors'
 
 export function CandidateDetailPage() {
-  const { candidateId } = useParams()
+  const { maskedIdentifier } = useParams()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  const contextConvocationId = searchParams.get('convocationId') ?? undefined
-  const contextSpecialityId = searchParams.get('specialityId') ?? undefined
-  const contextTribunalId = searchParams.get('tribunalId') ?? undefined
+  const contextConvocationYear = searchParams.get('convocationYear') ?? undefined
+  const contextSpecialty = searchParams.get('specialty') ?? undefined
+  const contextTribunalNumber = searchParams.get('tribunalNumber') ?? undefined
   const contextSearch = searchParams.get('q') ?? undefined
-  const contextSort = parseSort(searchParams.get('sort'))
-  const contextPage = Number(searchParams.get('page') ?? '0')
 
-  const hasListContext = Boolean(contextConvocationId && contextSpecialityId && contextTribunalId)
+  const hasListContext = Boolean(
+    contextConvocationYear && contextSpecialty && contextTribunalNumber,
+  )
 
-  const { data: candidate, isLoading, isError, error, refetch } = useCandidateDetail(candidateId)
+  const {
+    data: results,
+    isLoading: resultsLoading,
+    isError: resultsError,
+    error: resultsErrorDetail,
+    refetch: refetchResults,
+  } = useCandidateResults(maskedIdentifier)
+  const {
+    data: participations,
+    isLoading: participationsLoading,
+    isError: participationsError,
+    refetch: refetchParticipations,
+  } = useCandidateParticipations(maskedIdentifier)
 
-  const { data: list } = useCandidateList(
+  const { data: list } = useCandidateSearch(
     hasListContext
       ? {
-          convocationId: contextConvocationId!,
-          specialityId: contextSpecialityId!,
-          tribunalId: contextTribunalId!,
-          search: contextSearch,
-          sort: serializeSort(contextSort),
-          page: contextPage,
-          size: CANDIDATE_LIST_PAGE_SIZE,
+          convocationYear: Number(contextConvocationYear),
+          specialty: contextSpecialty,
+          tribunalNumber: contextTribunalNumber,
+          name: contextSearch,
         }
       : undefined,
   )
 
   const backUrl = hasListContext
-    ? `/convocations/${contextConvocationId}/specialities/${contextSpecialityId}/tribunals/${contextTribunalId}?${searchParams.toString()}`
+    ? `/convocations/${encodeURIComponent(contextConvocationYear!)}/specialities/${encodeURIComponent(contextSpecialty!)}/tribunals/${encodeURIComponent(contextTribunalNumber!)}?${searchParams.toString()}`
     : null
 
-  const currentIndex = list?.items?.findIndex((item) => item.id === candidateId) ?? -1
-  const previousId = currentIndex > 0 ? list!.items[currentIndex - 1].id : null
+  const currentIndex = list?.findIndex((item) => item.maskedIdentifier === maskedIdentifier) ?? -1
+  const previousId = currentIndex > 0 ? list![currentIndex - 1].maskedIdentifier : null
   const nextId =
-    currentIndex >= 0 && currentIndex < (list?.items?.length ?? 0) - 1
-      ? list!.items[currentIndex + 1].id
+    currentIndex >= 0 && currentIndex < (list?.length ?? 0) - 1
+      ? list![currentIndex + 1].maskedIdentifier
       : null
 
   function navigateToCandidate(id: string) {
-    navigate(`/candidates/${id}?${searchParams.toString()}`)
+    navigate(`/candidates/${encodeURIComponent(id)}?${searchParams.toString()}`)
   }
 
-  if (isLoading) {
+  if (resultsLoading || participationsLoading) {
     return <StateMessage title="Cargando aspirante…" />
   }
 
-  if (error instanceof NotFoundError) {
+  if (resultsErrorDetail instanceof NotFoundError) {
     return <StateMessage title="No se ha encontrado el aspirante solicitado." />
   }
 
-  if (isError || !candidate) {
-    return <ErrorMessage onRetry={() => refetch()} />
+  if (resultsError || participationsError || !results || !participations) {
+    return (
+      <ErrorMessage
+        onRetry={() => {
+          refetchResults()
+          refetchParticipations()
+        }}
+      />
+    )
   }
 
   return (
@@ -75,25 +90,17 @@ export function CandidateDetailPage() {
           to={backUrl ?? '/'}
           className="text-sm font-medium text-slate-500 hover:text-slate-900"
         >
-          ← Volver a {candidate.tribunal.name}
+          ← Volver al listado
         </Link>
       </div>
 
       <header className="flex flex-col gap-1 rounded-lg border border-slate-200 bg-white p-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-semibold text-slate-900">{candidate.fullName}</h1>
-          <CandidateStatusBadge status={candidate.status} />
-        </div>
-        <p className="text-sm text-slate-500">
-          {candidate.speciality.name} · {candidate.tribunal.name} · {candidate.convocation.name}
-        </p>
+        <h1 className="text-xl font-semibold text-slate-900">{results.fullName}</h1>
+        <p className="text-sm text-slate-500">{results.maskedIdentifier}</p>
       </header>
 
-      <CandidateScores sections={candidate.scoreSections} />
-      <CandidateMerits merits={candidate.merits} total={candidate.meritsTotal} />
-      <CandidateResult result={candidate.result} />
-
-      {candidate.source && <CandidateSourceInfo source={candidate.source} />}
+      <CandidateParticipations participations={participations.participations} />
+      <CandidateExamResults results={results.results} />
 
       <CandidateNavigation
         previousId={previousId}

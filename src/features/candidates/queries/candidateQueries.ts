@@ -1,24 +1,35 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { fetchCandidate, fetchCandidates } from '../api/candidatesApi'
-import type { CandidateListParams } from '../model/candidate'
+import { useQuery } from '@tanstack/react-query'
+import {
+  fetchCandidateParticipations,
+  fetchCandidateResults,
+  searchCandidates,
+} from '../api/candidatesApi'
+import type { CandidateSearchParams } from '../model/candidate'
 
-export function candidateListQueryKey(params: CandidateListParams) {
+export function candidateSearchQueryKey(params: CandidateSearchParams) {
   return ['candidates', params] as const
 }
 
-export function useCandidateList(params: CandidateListParams | undefined) {
+export function useCandidateSearch(params: CandidateSearchParams | undefined) {
   return useQuery({
-    queryKey: candidateListQueryKey(params!),
-    queryFn: () => fetchCandidates(params!),
+    queryKey: candidateSearchQueryKey(params ?? {}),
+    queryFn: () => searchCandidates(params!),
     enabled: Boolean(params),
-    placeholderData: keepPreviousData,
   })
 }
 
-export function useCandidateDetail(id: string | undefined) {
+export function useCandidateResults(maskedIdentifier: string | undefined) {
   return useQuery({
-    queryKey: ['candidate', id],
-    queryFn: () => fetchCandidate(id!),
-    enabled: Boolean(id),
+    queryKey: ['candidateResults', maskedIdentifier],
+    queryFn: () => fetchCandidateResults(maskedIdentifier!),
+    enabled: Boolean(maskedIdentifier),
+  })
+}
+
+export function useCandidateParticipations(maskedIdentifier: string | undefined) {
+  return useQuery({
+    queryKey: ['candidateParticipations', maskedIdentifier],
+    queryFn: () => fetchCandidateParticipations(maskedIdentifier!),
+    enabled: Boolean(maskedIdentifier),
   })
 }

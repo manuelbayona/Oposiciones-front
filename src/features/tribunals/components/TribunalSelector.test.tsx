@@ -10,12 +10,7 @@ describe('TribunalSelector', () => {
 
   it('is disabled until both convocation year and specialty are selected', () => {
     renderWithQueryClient(
-      <TribunalSelector
-        convocationYear="2026"
-        specialty={undefined}
-        value=""
-        onChange={vi.fn()}
-      />,
+      <TribunalSelector convocationYear="2026" specialty={undefined} value="" onChange={vi.fn()} />,
     )
 
     expect(screen.getByLabelText('Tribunal')).toBeDisabled()

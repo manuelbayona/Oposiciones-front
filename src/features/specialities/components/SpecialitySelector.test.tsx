@@ -28,9 +28,7 @@ describe('SpecialitySelector', () => {
     })
     vi.stubGlobal('fetch', fetchMock)
 
-    renderWithQueryClient(
-      <SpecialitySelector convocationYear="2026" value="" onChange={vi.fn()} />,
-    )
+    renderWithQueryClient(<SpecialitySelector convocationYear="2026" value="" onChange={vi.fn()} />)
 
     await waitFor(() => expect(screen.getByText('EDUCACIÓN INFANTIL')).toBeInTheDocument())
 
