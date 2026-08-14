@@ -1,24 +1,25 @@
-import { Navigate } from 'react-router-dom'
-import { useConvocations } from '../queries'
-import { ErrorMessage, StateMessage } from '../../../shared/components/StateMessage'
-import { SelectionBar } from '../../candidates/components/SelectionBar'
+import { ConvocationPicker } from '../components/ConvocationPicker'
+import { DataDisclaimer } from '../components/DataDisclaimer'
+import { EvolutionPreview } from '../components/EvolutionPreview'
+import { FutureRoadmap } from '../components/FutureRoadmap'
+import { Hero } from '../components/Hero'
+import { IntroSection } from '../components/IntroSection'
+import { ValueProps } from '../components/ValueProps'
 
 export function HomePage() {
-  const { data, isLoading, isError, refetch } = useConvocations()
-
-  if (isLoading) {
-    return <SelectionBar />
-  }
-
-  if (isError) {
-    return <ErrorMessage onRetry={() => refetch()} />
-  }
-
-  if (!data || data.length === 0) {
-    return <StateMessage title="No hay convocatorias disponibles todavía." />
-  }
-
-  const latestConvocation = [...data].sort((a, b) => b.year - a.year)[0]
-
-  return <Navigate to={`/convocations/${latestConvocation.id}`} replace />
+  return (
+    <div className="flex flex-col divide-y divide-slate-100">
+      <Hero />
+      <IntroSection />
+      <ValueProps />
+      <div className="py-10">
+        <ConvocationPicker />
+      </div>
+      <FutureRoadmap />
+      <EvolutionPreview />
+      <div className="py-10">
+        <DataDisclaimer />
+      </div>
+    </div>
+  )
 }

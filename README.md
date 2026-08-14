@@ -1,4 +1,4 @@
-# Oposiciones — Frontend
+# OpoData — Frontend
 
 Frontend de consulta para procesos selectivos de oposiciones docentes: convocatoria → especialidad → tribunal → listado de aspirantes → detalle del aspirante.
 
@@ -80,7 +80,7 @@ e2e/                     # tests Playwright
 ## Rutas
 
 ```
-/                                                                     → redirige a la última convocatoria
+/                                                                     → landing page (presentación + selector de convocatoria/especialidad/tribunal)
 /convocations/:convocationId
 /convocations/:convocationId/specialities/:specialityId
 /convocations/:convocationId/specialities/:specialityId/tribunals/:tribunalId

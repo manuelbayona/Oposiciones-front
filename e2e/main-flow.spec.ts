@@ -99,12 +99,15 @@ test('user can browse from convocation selection down to a candidate detail', as
 
   await page.goto('/')
 
-  // Home redirects to the latest convocation and prompts for the rest of the selection.
-  await expect(page).toHaveURL(/\/convocations\/c2026$/)
-  await expect(page.getByText('Selecciona una especialidad para continuar.')).toBeVisible()
+  // The landing page presents the pitch and a convocation/speciality/tribunal picker.
+  await expect(
+    page.getByRole('heading', { name: 'Todos los resultados de la oposición, en un solo lugar' }),
+  ).toBeVisible()
 
+  await page.selectOption('#convocation-selector', 'c2026')
   await page.selectOption('#speciality-selector', 's-infantil')
   await page.selectOption('#tribunal-selector', 't4')
+  await page.getByRole('button', { name: 'Ver aspirantes' }).click()
   await expect(page).toHaveURL(/\/tribunals\/t4$/)
 
   // Candidate list is visible with the expected count.
