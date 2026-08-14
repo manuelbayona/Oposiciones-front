@@ -1,0 +1,18 @@
+import { Link, Outlet } from 'react-router-dom'
+
+export function AppLayout() {
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
+          <Link to="/" className="text-lg font-semibold tracking-tight text-slate-900">
+            Oposiciones
+          </Link>
+        </div>
+      </header>
+      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+        <Outlet />
+      </main>
+    </div>
+  )
+}
