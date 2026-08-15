@@ -16,24 +16,14 @@ export function searchCandidates(params: CandidateSearchParams): Promise<Candida
   })
 }
 
-export function fetchCandidateResults(maskedIdentifier: string): Promise<CandidateResultsResponse> {
-  return apiGet<CandidateResultsResponse>(
-    `/candidates/${encodeURIComponent(maskedIdentifier)}/results`,
-  )
+export function fetchCandidateResults(id: number): Promise<CandidateResultsResponse> {
+  return apiGet<CandidateResultsResponse>(`/candidates/${id}/results`)
 }
 
-export function fetchCandidateParticipations(
-  maskedIdentifier: string,
-): Promise<CandidateParticipationsResponse> {
-  return apiGet<CandidateParticipationsResponse>(
-    `/candidates/${encodeURIComponent(maskedIdentifier)}/participations`,
-  )
+export function fetchCandidateParticipations(id: number): Promise<CandidateParticipationsResponse> {
+  return apiGet<CandidateParticipationsResponse>(`/candidates/${id}/participations`)
 }
 
-export function fetchCandidateInterinos(
-  maskedIdentifier: string,
-): Promise<CandidateInterinosResponse> {
-  return apiGet<CandidateInterinosResponse>(
-    `/candidates/${encodeURIComponent(maskedIdentifier)}/interinos`,
-  )
+export function fetchCandidateInterinos(id: number): Promise<CandidateInterinosResponse> {
+  return apiGet<CandidateInterinosResponse>(`/candidates/${id}/interinos`)
 }

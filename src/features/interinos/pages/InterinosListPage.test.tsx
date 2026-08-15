@@ -12,7 +12,7 @@ function renderListPage(initialPath: string) {
       <MemoryRouter initialEntries={[initialPath]}>
         <Routes>
           <Route path="/interinos" element={<InterinosListPage />} />
-          <Route path="/candidates/:maskedIdentifier" element={<div>Candidate detail page</div>} />
+          <Route path="/candidates/:id" element={<div>Candidate detail page</div>} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -22,6 +22,7 @@ function renderListPage(initialPath: string) {
 const searchResponse = {
   items: [
     {
+      candidateId: 1,
       maskedIdentifier: '***8381**',
       fullName: 'VICENTE SANCHEZ, SOFIA',
       listPosition: 400,

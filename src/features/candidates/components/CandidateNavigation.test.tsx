@@ -12,7 +12,7 @@ describe('CandidateNavigation', () => {
   })
 
   it('disables the previous button at the start of the list', () => {
-    render(<CandidateNavigation previousId={null} nextId="next-id" onNavigate={vi.fn()} />)
+    render(<CandidateNavigation previousId={null} nextId={2} onNavigate={vi.fn()} />)
     expect(screen.getByText('← Aspirante anterior')).toBeDisabled()
     expect(screen.getByText('Aspirante siguiente →')).not.toBeDisabled()
   })
@@ -20,10 +20,10 @@ describe('CandidateNavigation', () => {
   it('navigates to the next candidate when clicked', async () => {
     const user = userEvent.setup()
     const onNavigate = vi.fn()
-    render(<CandidateNavigation previousId="prev-id" nextId="next-id" onNavigate={onNavigate} />)
+    render(<CandidateNavigation previousId={1} nextId={2} onNavigate={onNavigate} />)
 
     await user.click(screen.getByText('Aspirante siguiente →'))
 
-    expect(onNavigate).toHaveBeenCalledWith('next-id')
+    expect(onNavigate).toHaveBeenCalledWith(2)
   })
 })

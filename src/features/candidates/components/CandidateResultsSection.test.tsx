@@ -36,7 +36,9 @@ describe('CandidateResultsSection', () => {
         ok: true,
         status: 200,
         json: () =>
-          Promise.resolve([{ maskedIdentifier: '***1234**', fullName: 'García López, María' }]),
+          Promise.resolve([
+            { id: 1, maskedIdentifier: '***1234**', fullName: 'García López, María' },
+          ]),
       }),
     )
 
@@ -81,7 +83,9 @@ describe('CandidateResultsSection', () => {
         ok: true,
         status: 200,
         json: () =>
-          Promise.resolve([{ maskedIdentifier: '***1234**', fullName: 'García López, María' }]),
+          Promise.resolve([
+            { id: 1, maskedIdentifier: '***1234**', fullName: 'García López, María' },
+          ]),
       }),
     )
 
@@ -91,7 +95,7 @@ describe('CandidateResultsSection', () => {
     await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
     await user.click(screen.getByLabelText('Ver detalle de García López, María'))
 
-    expect(onSelectCandidate).toHaveBeenCalledWith('***1234**', expect.any(URLSearchParams))
+    expect(onSelectCandidate).toHaveBeenCalledWith(1, expect.any(URLSearchParams))
     const [, contextParams] = onSelectCandidate.mock.calls[0]
     expect(contextParams.get('convocationYear')).toBe('2026')
     expect(contextParams.get('tribunalNumber')).toBe('4')

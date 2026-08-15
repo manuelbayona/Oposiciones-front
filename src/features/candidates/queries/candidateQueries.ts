@@ -19,26 +19,26 @@ export function useCandidateSearch(params: CandidateSearchParams | undefined) {
   })
 }
 
-export function useCandidateResults(maskedIdentifier: string | undefined) {
+export function useCandidateResults(id: number | undefined) {
   return useQuery({
-    queryKey: ['candidateResults', maskedIdentifier],
-    queryFn: () => fetchCandidateResults(maskedIdentifier!),
-    enabled: Boolean(maskedIdentifier),
+    queryKey: ['candidateResults', id],
+    queryFn: () => fetchCandidateResults(id!),
+    enabled: id !== undefined,
   })
 }
 
-export function useCandidateParticipations(maskedIdentifier: string | undefined) {
+export function useCandidateParticipations(id: number | undefined) {
   return useQuery({
-    queryKey: ['candidateParticipations', maskedIdentifier],
-    queryFn: () => fetchCandidateParticipations(maskedIdentifier!),
-    enabled: Boolean(maskedIdentifier),
+    queryKey: ['candidateParticipations', id],
+    queryFn: () => fetchCandidateParticipations(id!),
+    enabled: id !== undefined,
   })
 }
 
-export function useCandidateInterinos(maskedIdentifier: string | undefined) {
+export function useCandidateInterinos(id: number | undefined) {
   return useQuery({
-    queryKey: ['candidateInterinos', maskedIdentifier],
-    queryFn: () => fetchCandidateInterinos(maskedIdentifier!),
-    enabled: Boolean(maskedIdentifier),
+    queryKey: ['candidateInterinos', id],
+    queryFn: () => fetchCandidateInterinos(id!),
+    enabled: id !== undefined,
   })
 }

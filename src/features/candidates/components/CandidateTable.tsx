@@ -2,7 +2,7 @@ import type { CandidateSummary } from '../model/candidate'
 
 interface CandidateTableProps {
   items: CandidateSummary[]
-  onSelectCandidate: (maskedIdentifier: string) => void
+  onSelectCandidate: (id: number) => void
 }
 
 export function CandidateTable({ items, onSelectCandidate }: CandidateTableProps) {
@@ -19,12 +19,12 @@ export function CandidateTable({ items, onSelectCandidate }: CandidateTableProps
         <tbody>
           {items.map((candidate) => (
             <tr
-              key={candidate.maskedIdentifier}
-              onClick={() => onSelectCandidate(candidate.maskedIdentifier)}
+              key={candidate.id}
+              onClick={() => onSelectCandidate(candidate.id)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault()
-                  onSelectCandidate(candidate.maskedIdentifier)
+                  onSelectCandidate(candidate.id)
                 }
               }}
               tabIndex={0}

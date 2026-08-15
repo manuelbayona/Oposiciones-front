@@ -19,7 +19,7 @@ function renderExplorer(initialPath: string) {
             path="/convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber"
             element={<CandidatesExplorerPage />}
           />
-          <Route path="/candidates/:maskedIdentifier" element={<div>Candidate detail page</div>} />
+          <Route path="/candidates/:id" element={<div>Candidate detail page</div>} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -64,7 +64,9 @@ describe('CandidatesExplorerPage', () => {
             ok: true,
             status: 200,
             json: () =>
-              Promise.resolve([{ maskedIdentifier: '***1234**', fullName: 'García López, María' }]),
+              Promise.resolve([
+                { id: 1, maskedIdentifier: '***1234**', fullName: 'García López, María' },
+              ]),
           })
         }
         return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([]) })

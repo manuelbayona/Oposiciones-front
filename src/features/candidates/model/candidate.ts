@@ -1,5 +1,6 @@
 /** Matches GET /api/v1/candidates — search-by-name result, per CandidateSummaryResponse. */
 export interface CandidateSummary {
+  id: number
   maskedIdentifier: string
   fullName: string
 }
@@ -40,8 +41,9 @@ export interface ExamResultItem {
   processedAt: string
 }
 
-/** Matches GET /api/v1/candidates/{maskedIdentifier}/results. */
+/** Matches GET /api/v1/candidates/{id}/results. */
 export interface CandidateResultsResponse {
+  id: number
   maskedIdentifier: string
   fullName: string
   results: ExamResultItem[]
@@ -57,8 +59,9 @@ export interface ParticipationItem {
   totalMeritScore: number | null
 }
 
-/** Matches GET /api/v1/candidates/{maskedIdentifier}/participations. */
+/** Matches GET /api/v1/candidates/{id}/participations. */
 export interface CandidateParticipationsResponse {
+  id: number
   maskedIdentifier: string
   fullName: string
   participations: ParticipationItem[]

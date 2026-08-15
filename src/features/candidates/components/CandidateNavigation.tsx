@@ -1,7 +1,7 @@
 interface CandidateNavigationProps {
-  previousId: string | null
-  nextId: string | null
-  onNavigate: (maskedIdentifier: string) => void
+  previousId: number | null
+  nextId: number | null
+  onNavigate: (id: number) => void
 }
 
 export function CandidateNavigation({ previousId, nextId, onNavigate }: CandidateNavigationProps) {

@@ -19,6 +19,7 @@ export interface InterinosSearchParams {
  * otherwise. The backend never decides which block "won"; both are shown as published.
  */
 export interface InterinosListingEntryItem {
+  candidateId: number
   maskedIdentifier: string
   fullName: string
   listPosition: number
@@ -63,8 +64,9 @@ export interface InterinosEntryItem {
   processedAt: string
 }
 
-/** Matches GET /api/v1/candidates/{maskedIdentifier}/interinos. */
+/** Matches GET /api/v1/candidates/{id}/interinos. */
 export interface CandidateInterinosResponse {
+  id: number
   maskedIdentifier: string
   fullName: string
   entries: InterinosEntryItem[]

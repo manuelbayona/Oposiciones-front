@@ -5,6 +5,7 @@ import { InterinosTable } from './InterinosTable'
 import type { InterinosListingEntryItem } from '../model/interinos'
 
 const entry: InterinosListingEntryItem = {
+  candidateId: 1,
   maskedIdentifier: '***8381**',
   fullName: 'VICENTE SANCHEZ, SOFIA',
   listPosition: 400,
@@ -33,7 +34,7 @@ describe('InterinosTable', () => {
     expect(screen.getByText('9,29')).toBeInTheDocument()
   })
 
-  it('calls onSelectCandidate with the masked identifier when a row is clicked', async () => {
+  it('calls onSelectCandidate with the candidate id when a row is clicked', async () => {
     const onSelectCandidate = vi.fn()
     render(
       <InterinosTable items={[entry]} specialtyLegend={{}} onSelectCandidate={onSelectCandidate} />,
@@ -41,6 +42,6 @@ describe('InterinosTable', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /VICENTE SANCHEZ, SOFIA/ }))
 
-    expect(onSelectCandidate).toHaveBeenCalledWith('***8381**')
+    expect(onSelectCandidate).toHaveBeenCalledWith(1)
   })
 })

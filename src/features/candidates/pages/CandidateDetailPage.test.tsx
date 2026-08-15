@@ -10,7 +10,7 @@ function renderDetailPage(initialPath: string) {
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[initialPath]}>
         <Routes>
-          <Route path="/candidates/:maskedIdentifier" element={<CandidateDetailPage />} />
+          <Route path="/candidates/:id" element={<CandidateDetailPage />} />
           <Route
             path="/convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber"
             element={<div>List page</div>}
@@ -22,6 +22,7 @@ function renderDetailPage(initialPath: string) {
 }
 
 const resultsResponse = {
+  id: 1,
   maskedIdentifier: '***1234**',
   fullName: 'García López, María',
   results: [
@@ -44,6 +45,7 @@ const resultsResponse = {
 }
 
 const participationsResponse = {
+  id: 1,
   maskedIdentifier: '***1234**',
   fullName: 'García López, María',
   participations: [
@@ -59,6 +61,7 @@ const participationsResponse = {
 }
 
 const interinosResponse = {
+  id: 1,
   maskedIdentifier: '***1234**',
   fullName: 'García López, María',
   entries: [],
@@ -107,7 +110,7 @@ describe('CandidateDetailPage', () => {
   it('shows the candidate name, participations and results once loaded', async () => {
     stubFetch()
 
-    renderDetailPage('/candidates/***1234**')
+    renderDetailPage('/candidates/1')
 
     await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
     expect(screen.getByText('PRIMERA PRUEBA')).toBeInTheDocument()
@@ -120,7 +123,7 @@ describe('CandidateDetailPage', () => {
       vi.fn().mockResolvedValue({ ok: false, status: 404, json: () => Promise.resolve({}) }),
     )
 
-    renderDetailPage('/candidates/***9999**')
+    renderDetailPage('/candidates/9999')
 
     await waitFor(() =>
       expect(screen.getByText('No se ha encontrado el aspirante solicitado.')).toBeInTheDocument(),
@@ -134,14 +137,16 @@ describe('CandidateDetailPage', () => {
           ok: true,
           status: 200,
           json: () =>
-            Promise.resolve([{ maskedIdentifier: '***1234**', fullName: 'García López, María' }]),
+            Promise.resolve([
+              { id: 1, maskedIdentifier: '***1234**', fullName: 'García López, María' },
+            ]),
         } as unknown as Response
       }
       return undefined
     })
 
     renderDetailPage(
-      '/candidates/***1234**?convocationYear=2026&specialty=EDUCACI%C3%93N%20INFANTIL&tribunalNumber=4',
+      '/candidates/1?convocationYear=2026&specialty=EDUCACI%C3%93N%20INFANTIL&tribunalNumber=4',
     )
 
     await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
