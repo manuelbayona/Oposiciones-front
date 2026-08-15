@@ -1,15 +1,38 @@
 import { formatScore } from '../../../shared/utils/format'
-import type { ExamResultItem } from '../model/candidate'
+import type { ExamResultItem, PassStatus } from '../model/candidate'
 
 /**
- * `attendanceStatus` is displayed verbatim, never color-coded as pass/fail — this frontend
- * never decides business logic (pass/fail, final score, plaza) per the project's own principle;
- * that judgement belongs to the source document, not to a badge we invent here.
+ * `attendanceStatus` is displayed verbatim, never color-coded — that reflects only whether the
+ * candidate showed up, not whether they passed.
  */
 function AttendanceLabel({ attendanceStatus }: { attendanceStatus: string }) {
   return (
     <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-600">
       {attendanceStatus}
+    </span>
+  )
+}
+
+/**
+ * `passStatus` never comes from a threshold this frontend (or the backend) invents — it is set
+ * only when the candidate's presence or absence in an official "quienes han superado" listing
+ * proves the outcome (see PassStatus on the backend). UNKNOWN means no such listing has been
+ * published yet, so nothing is shown rather than a guess.
+ */
+function PassStatusLabel({ passStatus }: { passStatus: PassStatus }) {
+  if (passStatus === 'UNKNOWN') {
+    return null
+  }
+  const isPassed = passStatus === 'PASSED'
+  return (
+    <span
+      className={
+        isPassed
+          ? 'inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700'
+          : 'inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700'
+      }
+    >
+      {isPassed ? 'Aprobó' : 'No aprobó'}
     </span>
   )
 }
@@ -40,6 +63,7 @@ export function CandidateExamResults({ results }: { results: ExamResultItem[] })
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-medium text-slate-900">{result.examName}</p>
               <AttendanceLabel attendanceStatus={result.attendanceStatus} />
+              <PassStatusLabel passStatus={result.passStatus} />
               {!result.valid && (
                 <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
                   Con incidencias de validación

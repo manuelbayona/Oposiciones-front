@@ -24,6 +24,13 @@ export interface ExamPartItem {
   score: ScoreItem
 }
 
+/**
+ * Whether the candidate passed this exam phase, derived only from an official "quienes han
+ * superado" listing — never from an invented passing threshold. UNKNOWN means no such listing
+ * has been published yet, not that the outcome is unclear.
+ */
+export type PassStatus = 'PASSED' | 'NOT_PASSED' | 'UNKNOWN'
+
 /** Matches ExamResultItem in CandidateResultsResponse. */
 export interface ExamResultItem {
   sourceDocument: string
@@ -39,6 +46,7 @@ export interface ExamResultItem {
   valid: boolean
   extractorVersion: string
   processedAt: string
+  passStatus: PassStatus
 }
 
 /** Matches GET /api/v1/candidates/{id}/results. */

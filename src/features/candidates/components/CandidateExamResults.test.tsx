@@ -20,6 +20,7 @@ const twoPartResult: ExamResultItem = {
   valid: true,
   extractorVersion: '0.1.0',
   processedAt: '2026-08-13T11:20:50Z',
+  passStatus: 'UNKNOWN',
 }
 
 describe('CandidateExamResults', () => {
@@ -59,5 +60,24 @@ describe('CandidateExamResults', () => {
     render(<CandidateExamResults results={[{ ...twoPartResult, valid: false }]} />)
 
     expect(screen.getByText('Con incidencias de validación')).toBeInTheDocument()
+  })
+
+  it('shows an "Aprobó" badge when the candidate passed', () => {
+    render(<CandidateExamResults results={[{ ...twoPartResult, passStatus: 'PASSED' }]} />)
+
+    expect(screen.getByText('Aprobó')).toBeInTheDocument()
+  })
+
+  it('shows a "No aprobó" badge when the candidate did not pass', () => {
+    render(<CandidateExamResults results={[{ ...twoPartResult, passStatus: 'NOT_PASSED' }]} />)
+
+    expect(screen.getByText('No aprobó')).toBeInTheDocument()
+  })
+
+  it('shows no pass/fail badge when no official listing has settled the outcome yet', () => {
+    render(<CandidateExamResults results={[{ ...twoPartResult, passStatus: 'UNKNOWN' }]} />)
+
+    expect(screen.queryByText('Aprobó')).not.toBeInTheDocument()
+    expect(screen.queryByText('No aprobó')).not.toBeInTheDocument()
   })
 })
