@@ -1,6 +1,12 @@
 import { apiGet } from '../../../shared/api/client'
-import type { Tribunal } from '../model'
+import type { TribunalNumber } from '../model'
 
-export function fetchTribunals(convocationId: string, specialityId: string): Promise<Tribunal[]> {
-  return apiGet<Tribunal[]>(`/convocations/${convocationId}/specialities/${specialityId}/tribunals`)
+export function fetchTribunalNumbers(
+  convocationYear: string,
+  specialty: string,
+): Promise<TribunalNumber[]> {
+  return apiGet<TribunalNumber[]>('/participations/tribunal-numbers', {
+    convocationYear,
+    specialty,
+  })
 }

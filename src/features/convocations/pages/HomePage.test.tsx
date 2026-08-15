@@ -38,13 +38,17 @@ describe('HomePage', () => {
     renderHomePage()
 
     expect(
-      screen.getByRole('heading', { name: 'Todos los resultados de la oposición, en un solo lugar' }),
+      screen.getByRole('heading', {
+        name: 'Todos los resultados de la oposición, en un solo lugar',
+      }),
     ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Consultar resultados' })).toHaveAttribute(
       'href',
       '#consultar',
     )
-    expect(screen.getByRole('heading', { name: '¿Cómo ha evolucionado un aspirante?' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: '¿Cómo ha evolucionado un aspirante?' }),
+    ).toBeInTheDocument()
   })
 
   it('shows a message in the picker when there are no convocations available', async () => {
@@ -64,26 +68,18 @@ describe('HomePage', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockImplementation((url: string) => {
-        if (url.includes('/tribunals')) {
+        if (url.includes('/tribunal-numbers')) {
+          return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(['25']) })
+        }
+        if (url.includes('/specialties')) {
           return Promise.resolve({
             ok: true,
             status: 200,
-            json: () => Promise.resolve([{ id: 't25', name: 'Tribunal 25' }]),
+            json: () => Promise.resolve(['EDUCACIÓN INFANTIL']),
           })
         }
-        if (url.includes('/specialities')) {
-          return Promise.resolve({
-            ok: true,
-            status: 200,
-            json: () => Promise.resolve([{ id: 's-infantil', name: 'Educación Infantil' }]),
-          })
-        }
-        if (url.includes('/convocations')) {
-          return Promise.resolve({
-            ok: true,
-            status: 200,
-            json: () => Promise.resolve([{ id: 'c2026', name: '2026 - Maestros', year: 2026 }]),
-          })
+        if (url.includes('/convocation-years')) {
+          return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([2026]) })
         }
         return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([]) })
       }),
@@ -92,18 +88,18 @@ describe('HomePage', () => {
     const user = userEvent.setup()
     renderHomePage()
 
-    await waitFor(() => expect(screen.getByText('2026 - Maestros')).toBeInTheDocument())
-    await user.selectOptions(screen.getByLabelText('Convocatoria'), 'c2026')
-    await waitFor(() => expect(screen.getByText('Educación Infantil')).toBeInTheDocument())
-    await user.selectOptions(screen.getByLabelText('Especialidad'), 's-infantil')
-    await waitFor(() => expect(screen.getByText('Tribunal 25')).toBeInTheDocument())
-    await user.selectOptions(screen.getByLabelText('Tribunal'), 't25')
+    await waitFor(() => expect(screen.getByText('2026')).toBeInTheDocument())
+    await user.selectOptions(screen.getByLabelText('Convocatoria'), '2026')
+    await waitFor(() => expect(screen.getByText('EDUCACIÓN INFANTIL')).toBeInTheDocument())
+    await user.selectOptions(screen.getByLabelText('Especialidad'), 'EDUCACIÓN INFANTIL')
+    await waitFor(() => expect(screen.getByText('25')).toBeInTheDocument())
+    await user.selectOptions(screen.getByLabelText('Tribunal'), '25')
 
     await user.click(screen.getByRole('button', { name: 'Ver aspirantes' }))
 
     await waitFor(() =>
       expect(screen.getByTestId('location')).toHaveTextContent(
-        '/convocations/c2026/specialities/s-infantil/tribunals/t25',
+        '/convocations/2026/specialities/EDUCACI%C3%93N%20INFANTIL/tribunals/25',
       ),
     )
   })

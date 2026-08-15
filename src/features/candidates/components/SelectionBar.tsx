@@ -4,52 +4,56 @@ import { SpecialitySelector } from '../../specialities/components/SpecialitySele
 import { TribunalSelector } from '../../tribunals/components/TribunalSelector'
 
 interface SelectionBarProps {
-  convocationId?: string
-  specialityId?: string
-  tribunalId?: string
+  convocationYear?: string
+  specialty?: string
+  tribunalNumber?: string
 }
 
-export function SelectionBar({ convocationId, specialityId, tribunalId }: SelectionBarProps) {
+export function SelectionBar({ convocationYear, specialty, tribunalNumber }: SelectionBarProps) {
   const navigate = useNavigate()
 
-  function handleConvocationChange(nextConvocationId: string) {
-    if (!nextConvocationId) {
+  function handleConvocationChange(nextConvocationYear: string) {
+    if (!nextConvocationYear) {
       navigate('/')
       return
     }
-    navigate(`/convocations/${nextConvocationId}`)
+    navigate(`/convocations/${encodeURIComponent(nextConvocationYear)}`)
   }
 
-  function handleSpecialityChange(nextSpecialityId: string) {
-    if (!nextSpecialityId) {
-      navigate(`/convocations/${convocationId}`)
-      return
-    }
-    navigate(`/convocations/${convocationId}/specialities/${nextSpecialityId}`)
-  }
-
-  function handleTribunalChange(nextTribunalId: string) {
-    if (!nextTribunalId) {
-      navigate(`/convocations/${convocationId}/specialities/${specialityId}`)
+  function handleSpecialtyChange(nextSpecialty: string) {
+    if (!nextSpecialty) {
+      navigate(`/convocations/${encodeURIComponent(convocationYear!)}`)
       return
     }
     navigate(
-      `/convocations/${convocationId}/specialities/${specialityId}/tribunals/${nextTribunalId}`,
+      `/convocations/${encodeURIComponent(convocationYear!)}/specialities/${encodeURIComponent(nextSpecialty)}`,
+    )
+  }
+
+  function handleTribunalChange(nextTribunalNumber: string) {
+    if (!nextTribunalNumber) {
+      navigate(
+        `/convocations/${encodeURIComponent(convocationYear!)}/specialities/${encodeURIComponent(specialty!)}`,
+      )
+      return
+    }
+    navigate(
+      `/convocations/${encodeURIComponent(convocationYear!)}/specialities/${encodeURIComponent(specialty!)}/tribunals/${encodeURIComponent(nextTribunalNumber)}`,
     )
   }
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 sm:flex-row">
-      <ConvocationSelector value={convocationId ?? ''} onChange={handleConvocationChange} />
+      <ConvocationSelector value={convocationYear ?? ''} onChange={handleConvocationChange} />
       <SpecialitySelector
-        convocationId={convocationId}
-        value={specialityId ?? ''}
-        onChange={handleSpecialityChange}
+        convocationYear={convocationYear}
+        value={specialty ?? ''}
+        onChange={handleSpecialtyChange}
       />
       <TribunalSelector
-        convocationId={convocationId}
-        specialityId={specialityId}
-        value={tribunalId ?? ''}
+        convocationYear={convocationYear}
+        specialty={specialty}
+        value={tribunalNumber ?? ''}
         onChange={handleTribunalChange}
       />
     </div>

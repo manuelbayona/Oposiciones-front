@@ -1,6 +1,6 @@
 import { apiGet } from '../../../shared/api/client'
-import type { Convocation } from '../model'
+import type { ConvocationYear } from '../model'
 
-export function fetchConvocations(): Promise<Convocation[]> {
-  return apiGet<Convocation[]>('/convocations')
+export function fetchConvocationYears(): Promise<ConvocationYear[]> {
+  return apiGet<ConvocationYear[]>('/participations/convocation-years')
 }

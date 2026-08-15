@@ -1,22 +1,22 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fetchTribunals } from './tribunalsApi'
+import { fetchTribunalNumbers } from './tribunalsApi'
 
-describe('fetchTribunals', () => {
+describe('fetchTribunalNumbers', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
   })
 
-  it('requests tribunals scoped to the given convocation and speciality', async () => {
+  it('requests tribunal numbers scoped to the given convocation year and specialty', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve([]) })
     vi.stubGlobal('fetch', fetchMock)
 
-    await fetchTribunals('c2026', 's-infantil')
+    await fetchTribunalNumbers('2026', 'EDUCACIÓN INFANTIL')
 
     const requestedUrl = new URL(fetchMock.mock.calls[0][0])
-    expect(requestedUrl.pathname).toBe(
-      '/api/v1/convocations/c2026/specialities/s-infantil/tribunals',
-    )
+    expect(requestedUrl.pathname).toBe('/api/v1/participations/tribunal-numbers')
+    expect(requestedUrl.searchParams.get('convocationYear')).toBe('2026')
+    expect(requestedUrl.searchParams.get('specialty')).toBe('EDUCACIÓN INFANTIL')
   })
 })

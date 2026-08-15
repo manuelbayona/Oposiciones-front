@@ -1,6 +1,6 @@
 import { apiGet } from '../../../shared/api/client'
-import type { Speciality } from '../model'
+import type { Specialty } from '../model'
 
-export function fetchSpecialities(convocationId: string): Promise<Speciality[]> {
-  return apiGet<Speciality[]>(`/convocations/${convocationId}/specialities`)
+export function fetchSpecialties(convocationYear: string): Promise<Specialty[]> {
+  return apiGet<Specialty[]>('/participations/specialties', { convocationYear })
 }

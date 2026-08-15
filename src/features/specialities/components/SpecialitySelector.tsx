@@ -1,14 +1,14 @@
 import { LabeledSelect } from '../../../shared/components/LabeledSelect'
-import { useSpecialities } from '../queries'
+import { useSpecialties } from '../queries'
 
 interface SpecialitySelectorProps {
-  convocationId: string | undefined
+  convocationYear: string | undefined
   value: string
-  onChange: (specialityId: string) => void
+  onChange: (specialty: string) => void
 }
 
-export function SpecialitySelector({ convocationId, value, onChange }: SpecialitySelectorProps) {
-  const { data, isLoading } = useSpecialities(convocationId)
+export function SpecialitySelector({ convocationYear, value, onChange }: SpecialitySelectorProps) {
+  const { data, isLoading } = useSpecialties(convocationYear)
 
   return (
     <LabeledSelect
@@ -16,12 +16,12 @@ export function SpecialitySelector({ convocationId, value, onChange }: Specialit
       label="Especialidad"
       value={value}
       onChange={onChange}
-      disabled={!convocationId}
+      disabled={!convocationYear}
       loading={isLoading}
       placeholder="Selecciona especialidad"
-      options={(data ?? []).map((speciality) => ({
-        value: speciality.id,
-        label: speciality.name,
+      options={(data ?? []).map((specialty) => ({
+        value: specialty,
+        label: specialty,
       }))}
     />
   )

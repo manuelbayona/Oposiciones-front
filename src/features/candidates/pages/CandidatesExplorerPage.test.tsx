@@ -10,16 +10,16 @@ function renderExplorer(initialPath: string) {
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[initialPath]}>
         <Routes>
-          <Route path="/convocations/:convocationId" element={<CandidatesExplorerPage />} />
+          <Route path="/convocations/:convocationYear" element={<CandidatesExplorerPage />} />
           <Route
-            path="/convocations/:convocationId/specialities/:specialityId"
+            path="/convocations/:convocationYear/specialities/:specialty"
             element={<CandidatesExplorerPage />}
           />
           <Route
-            path="/convocations/:convocationId/specialities/:specialityId/tribunals/:tribunalId"
+            path="/convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber"
             element={<CandidatesExplorerPage />}
           />
-          <Route path="/candidates/:candidateId" element={<div>Candidate detail page</div>} />
+          <Route path="/candidates/:maskedIdentifier" element={<div>Candidate detail page</div>} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -31,24 +31,24 @@ describe('CandidatesExplorerPage', () => {
     vi.unstubAllGlobals()
   })
 
-  it('prompts to select a speciality once only a convocation is chosen', () => {
+  it('prompts to select a specialty once only a convocation is chosen', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve([]) }),
     )
 
-    renderExplorer('/convocations/c2026')
+    renderExplorer('/convocations/2026')
 
     expect(screen.getByText('Selecciona una especialidad para continuar.')).toBeInTheDocument()
   })
 
-  it('prompts to select a tribunal once convocation and speciality are chosen', () => {
+  it('prompts to select a tribunal once convocation and specialty are chosen', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve([]) }),
     )
 
-    renderExplorer('/convocations/c2026/specialities/s-infantil')
+    renderExplorer('/convocations/2026/specialities/EDUCACI%C3%93N%20INFANTIL')
 
     expect(
       screen.getByText('Selecciona un tribunal para ver el listado de aspirantes.'),
@@ -64,30 +64,14 @@ describe('CandidatesExplorerPage', () => {
             ok: true,
             status: 200,
             json: () =>
-              Promise.resolve({
-                columns: [],
-                items: [
-                  {
-                    id: 'cand-1',
-                    position: 1,
-                    fullName: 'García López, María',
-                    status: 'EVALUATED',
-                    scores: {},
-                    hasPosition: null,
-                  },
-                ],
-                totalCount: 1,
-                page: 0,
-                pageSize: 50,
-                totalPages: 1,
-              }),
+              Promise.resolve([{ maskedIdentifier: '***1234**', fullName: 'García López, María' }]),
           })
         }
         return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([]) })
       }),
     )
 
-    renderExplorer('/convocations/c2026/specialities/s-infantil/tribunals/t4')
+    renderExplorer('/convocations/2026/specialities/EDUCACI%C3%93N%20INFANTIL/tribunals/4')
 
     await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
   })

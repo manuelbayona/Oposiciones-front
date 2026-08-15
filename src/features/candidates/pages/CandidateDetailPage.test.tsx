@@ -10,9 +10,9 @@ function renderDetailPage(initialPath: string) {
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[initialPath]}>
         <Routes>
-          <Route path="/candidates/:candidateId" element={<CandidateDetailPage />} />
+          <Route path="/candidates/:maskedIdentifier" element={<CandidateDetailPage />} />
           <Route
-            path="/convocations/:convocationId/specialities/:specialityId/tribunals/:tribunalId"
+            path="/convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber"
             element={<div>List page</div>}
           />
         </Routes>
@@ -21,24 +21,66 @@ function renderDetailPage(initialPath: string) {
   )
 }
 
-const candidateDetail = {
-  id: 'cand-1',
+const resultsResponse = {
+  maskedIdentifier: '***1234**',
   fullName: 'García López, María',
-  convocation: { id: 'c2026', name: '2026 - Maestros' },
-  speciality: { id: 's-infantil', name: 'Educación Infantil' },
-  tribunal: { id: 't4', name: 'Tribunal 4' },
-  status: 'EVALUATED',
-  scoreSections: [],
-  merits: null,
-  meritsTotal: null,
-  result: {
-    oppositionScore: 8.75,
-    meritsScore: 7.2,
-    finalScore: 8.13,
-    position: 5,
-    hasPosition: true,
-  },
-  source: null,
+  results: [
+    {
+      sourceDocument: '/data/EI-25.pdf',
+      documentType: 'calificaciones',
+      examName: 'PRIMERA PRUEBA',
+      body: 'MAESTROS',
+      specialty: 'EDUCACIÓN INFANTIL',
+      tribunalNumber: '4',
+      accessCode: '1',
+      parts: [{ partCode: 'A', score: { rawValue: '8,7500', value: 8.75 } }],
+      totalScore: { rawValue: '8,7500', value: 8.75 },
+      attendanceStatus: 'presentado',
+      valid: true,
+      extractorVersion: '0.1.0',
+      processedAt: '2026-08-13T11:20:50Z',
+    },
+  ],
+}
+
+const participationsResponse = {
+  maskedIdentifier: '***1234**',
+  fullName: 'García López, María',
+  participations: [
+    {
+      convocationYear: 2026,
+      convocationCode: null,
+      body: 'MAESTROS',
+      specialty: 'EDUCACIÓN INFANTIL',
+      tribunalNumber: '4',
+      totalMeritScore: 7.2,
+    },
+  ],
+}
+
+function stubFetch(overrides: (url: string) => Response | undefined = () => undefined) {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockImplementation((url: string) => {
+      const override = overrides(url)
+      if (override) return Promise.resolve(override)
+      if (url.includes('/results')) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(resultsResponse),
+        })
+      }
+      if (url.includes('/participations')) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(participationsResponse),
+        })
+      }
+      return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([]) })
+    }),
+  )
 }
 
 describe('CandidateDetailPage', () => {
@@ -46,21 +88,14 @@ describe('CandidateDetailPage', () => {
     vi.unstubAllGlobals()
   })
 
-  it('shows the candidate name, context and result once loaded', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        json: () => Promise.resolve(candidateDetail),
-      }),
-    )
+  it('shows the candidate name, participations and results once loaded', async () => {
+    stubFetch()
 
-    renderDetailPage('/candidates/cand-1')
+    renderDetailPage('/candidates/***1234**')
 
     await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
-    expect(screen.getByText(/Educación Infantil/)).toBeInTheDocument()
-    expect(screen.getByText('8,13')).toBeInTheDocument()
+    expect(screen.getByText('PRIMERA PRUEBA')).toBeInTheDocument()
+    expect(screen.getByText('7,20')).toBeInTheDocument()
   })
 
   it('shows a not-found message for a missing candidate instead of a generic error', async () => {
@@ -69,7 +104,7 @@ describe('CandidateDetailPage', () => {
       vi.fn().mockResolvedValue({ ok: false, status: 404, json: () => Promise.resolve({}) }),
     )
 
-    renderDetailPage('/candidates/unknown')
+    renderDetailPage('/candidates/***9999**')
 
     await waitFor(() =>
       expect(screen.getByText('No se ha encontrado el aspirante solicitado.')).toBeInTheDocument(),
@@ -77,45 +112,28 @@ describe('CandidateDetailPage', () => {
   })
 
   it('links back to the list preserving the query context when present', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockImplementation((url: string) => {
-        if (url.includes('/candidates?')) {
-          return Promise.resolve({
-            ok: true,
-            status: 200,
-            json: () =>
-              Promise.resolve({
-                columns: [],
-                items: [candidateDetail].map((c) => ({
-                  id: c.id,
-                  position: 1,
-                  fullName: c.fullName,
-                  status: c.status,
-                  scores: {},
-                  hasPosition: null,
-                })),
-                totalCount: 1,
-                page: 0,
-                pageSize: 50,
-                totalPages: 1,
-              }),
-          })
-        }
-        return Promise.resolve({
+    stubFetch((url) => {
+      if (url.includes('/candidates?')) {
+        return {
           ok: true,
           status: 200,
-          json: () => Promise.resolve(candidateDetail),
-        })
-      }),
+          json: () =>
+            Promise.resolve([{ maskedIdentifier: '***1234**', fullName: 'García López, María' }]),
+        } as unknown as Response
+      }
+      return undefined
+    })
+
+    renderDetailPage(
+      '/candidates/***1234**?convocationYear=2026&specialty=EDUCACI%C3%93N%20INFANTIL&tribunalNumber=4',
     )
 
-    renderDetailPage('/candidates/cand-1?convocationId=c2026&specialityId=s-infantil&tribunalId=t4')
-
     await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
-    expect(screen.getByText('← Volver a Tribunal 4')).toHaveAttribute(
+    expect(screen.getByText('← Volver al listado')).toHaveAttribute(
       'href',
-      expect.stringContaining('/convocations/c2026/specialities/s-infantil/tribunals/t4'),
+      expect.stringContaining(
+        '/convocations/2026/specialities/EDUCACI%C3%93N%20INFANTIL/tribunals/4',
+      ),
     )
   })
 })

@@ -11,16 +11,16 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'convocations/:convocationId', element: <CandidatesExplorerPage /> },
+      { path: 'convocations/:convocationYear', element: <CandidatesExplorerPage /> },
       {
-        path: 'convocations/:convocationId/specialities/:specialityId',
+        path: 'convocations/:convocationYear/specialities/:specialty',
         element: <CandidatesExplorerPage />,
       },
       {
-        path: 'convocations/:convocationId/specialities/:specialityId/tribunals/:tribunalId',
+        path: 'convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber',
         element: <CandidatesExplorerPage />,
       },
-      { path: 'candidates/:candidateId', element: <CandidateDetailPage /> },
+      { path: 'candidates/:maskedIdentifier', element: <CandidateDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

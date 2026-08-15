@@ -18,8 +18,8 @@ function renderSelectionBar(initialPath: string) {
         <LocationDisplay />
         <Routes>
           <Route
-            path="/convocations/:convocationId"
-            element={<SelectionBar convocationId="c2026" />}
+            path="/convocations/:convocationYear"
+            element={<SelectionBar convocationYear="2026" />}
           />
         </Routes>
       </MemoryRouter>
@@ -32,15 +32,15 @@ describe('SelectionBar', () => {
     vi.unstubAllGlobals()
   })
 
-  it('navigates to the speciality route when a speciality is selected', async () => {
+  it('navigates to the specialty route when a specialty is selected', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockImplementation((url: string) => {
-        if (url.includes('/specialities')) {
+        if (url.includes('/specialties')) {
           return Promise.resolve({
             ok: true,
             status: 200,
-            json: () => Promise.resolve([{ id: 's-infantil', name: 'Educación Infantil' }]),
+            json: () => Promise.resolve(['EDUCACIÓN INFANTIL']),
           })
         }
         return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([]) })
@@ -48,15 +48,15 @@ describe('SelectionBar', () => {
     )
 
     const user = userEvent.setup()
-    renderSelectionBar('/convocations/c2026')
+    renderSelectionBar('/convocations/2026')
 
-    await waitFor(() => expect(screen.getByText('Educación Infantil')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('EDUCACIÓN INFANTIL')).toBeInTheDocument())
 
-    await user.selectOptions(screen.getByLabelText('Especialidad'), 's-infantil')
+    await user.selectOptions(screen.getByLabelText('Especialidad'), 'EDUCACIÓN INFANTIL')
 
     await waitFor(() =>
       expect(screen.getByTestId('location')).toHaveTextContent(
-        '/convocations/c2026/specialities/s-infantil',
+        '/convocations/2026/specialities/EDUCACI%C3%93N%20INFANTIL',
       ),
     )
   })

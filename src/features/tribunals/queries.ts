@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchTribunals } from './api/tribunalsApi'
+import { fetchTribunalNumbers } from './api/tribunalsApi'
 
-export function useTribunals(convocationId: string | undefined, specialityId: string | undefined) {
+export function useTribunalNumbers(
+  convocationYear: string | undefined,
+  specialty: string | undefined,
+) {
   return useQuery({
-    queryKey: ['tribunals', convocationId, specialityId],
-    queryFn: () => fetchTribunals(convocationId!, specialityId!),
-    enabled: Boolean(convocationId) && Boolean(specialityId),
+    queryKey: ['tribunalNumbers', convocationYear, specialty],
+    queryFn: () => fetchTribunalNumbers(convocationYear!, specialty!),
+    enabled: Boolean(convocationYear) && Boolean(specialty),
     staleTime: 5 * 60 * 1000,
   })
 }
