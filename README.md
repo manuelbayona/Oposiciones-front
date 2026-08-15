@@ -9,7 +9,7 @@ Consume exclusivamente la API REST del [backend](https://github.com/manuelbayona
 - TypeScript + React + Vite
 - React Router (rutas navegables por URL)
 - TanStack Query (fetching y caché de datos)
-- TanStack Table (listado de aspirantes)
+- TanStack Table (listado de interinos)
 - Tailwind CSS
 - Vitest + React Testing Library (unitarios y de componentes)
 - Playwright (end-to-end)
@@ -64,11 +64,18 @@ src/
     specialities/
     tribunals/
     candidates/
-      api/              # llamadas HTTP
+      api/              # llamadas HTTP (incluye /candidates/{id}/interinos)
       queries/          # hooks de TanStack Query
-      components/       # tabla, selectores, tarjetas de detalle
+      components/       # tabla, selectores, secciones de detalle
       pages/            # páginas enrutadas
-      model/            # tipos de dominio y lógica pura (sort, status)
+      model/            # tipos de dominio
+    interinos/
+      api/              # llamadas HTTP (/interinos, /interinos/specialties)
+      queries/          # hooks de TanStack Query
+      components/       # tabla paginada, filtros, sección de detalle del aspirante
+      pages/            # listado de interinos
+      model/            # tipos de dominio
+      utils/            # formateo específico (bloque)
   shared/
     api/                # cliente HTTP genérico y errores tipados
     components/         # UI reutilizable (estados de carga/error/vacío, paginación...)
@@ -80,18 +87,31 @@ e2e/                     # tests Playwright
 ## Rutas
 
 ```
-/                                                                     → landing page (presentación + selector de convocatoria/especialidad/tribunal)
-/convocations/:convocationId
-/convocations/:convocationId/specialities/:specialityId
-/convocations/:convocationId/specialities/:specialityId/tribunals/:tribunalId
-/candidates/:candidateId
+/                                                                              → landing page (presentación + selector de convocatoria/especialidad/tribunal)
+/convocations/:convocationYear
+/convocations/:convocationYear/specialities/:specialty
+/convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber
+/candidates/:maskedIdentifier
+/interinos                                                                     → listado definitivo de interinos, paginado y filtrable por bloque/especialidad
 ```
 
-El listado de aspirantes mantiene búsqueda, ordenación y página como query params (`?q=&sort=&page=`), de forma que la URL es siempre compartible y recargable. Al abrir un aspirante desde el listado, el contexto de filtros se traslada como query params de `/candidates/:id`, lo que permite volver atrás sin perder el estado y navegar al aspirante anterior/siguiente dentro del mismo listado.
+El listado de aspirantes y el listado de interinos mantienen sus filtros y página como query params, de forma que la URL es siempre compartible y recargable. Al abrir un aspirante desde cualquiera de los dos listados, el contexto (filtros de convocatoria/especialidad/tribunal, o de bloque/especialidad de interinos) se traslada como query params de `/candidates/:maskedIdentifier`, lo que permite volver atrás sin perder el estado. La navegación al aspirante anterior/siguiente solo está disponible viniendo del listado de aspirantes (que se carga completo); el listado de interinos pagina del lado del servidor sobre miles de filas reales, por lo que no ofrece esa navegación — ver "Limitaciones conocidas".
 
 ## Contrato con el backend
 
-El listado de aspirantes usa columnas dinámicas: el backend decide qué pruebas/columnas existen para cada convocatoria (`columns` en la respuesta de `/candidates`) y el frontend las renderiza sin asumir una estructura fija. Ver `src/features/candidates/model/candidate.ts` para el contrato de tipos completo. El contrato definitivo de la API se debe acordar con el backend; los endpoints y formas de respuesta actuales son la propuesta inicial del frontend.
+El frontend consume el contrato real y actual del backend, sin campos ni capacidades especulativas:
+
+- `GET /api/v1/candidates?name=&specialty=&tribunalNumber=&convocationYear=` → `{maskedIdentifier, fullName}[]`, sin paginación ni ordenación.
+- `GET /api/v1/candidates/{maskedIdentifier}/results` / `/participations` / `/interinos` → detalle del aspirante.
+- `GET /api/v1/interinos?block=&specialtyCode=&page=&size=` → listado paginado por el servidor.
+- `GET /api/v1/interinos/specialties` → código → nombre de especialidad, para etiquetar `accreditedSpecialtyCodes`.
+
+El aspirante nunca se identifica por un id numérico: siempre por su `maskedIdentifier` (p. ej. `***1234**`). Ver `src/features/candidates/model/candidate.ts` e `src/features/interinos/model/interinos.ts` para el contrato de tipos completo.
+
+## Limitaciones conocidas
+
+- El listado de aspirantes (`/candidates`) no admite paginación ni ordenación en el backend: se muestra la lista completa filtrada, sin notas por fila (ese endpoint no las expone).
+- El listado de interinos pagina del lado del servidor sobre miles de entradas reales; por eso, a diferencia del listado de aspirantes, no ofrece navegación "aspirante anterior/siguiente" desde el detalle (requeriría cargar el listado completo).
 
 ## Notas de implementación del MVP
 

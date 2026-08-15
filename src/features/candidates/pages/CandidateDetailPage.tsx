@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
+  useCandidateInterinos,
   useCandidateParticipations,
   useCandidateResults,
   useCandidateSearch,
@@ -7,6 +8,8 @@ import {
 import { CandidateParticipations } from '../components/CandidateParticipations'
 import { CandidateExamResults } from '../components/CandidateExamResults'
 import { CandidateNavigation } from '../components/CandidateNavigation'
+import { CandidateInterinosSection } from '../../interinos/components/CandidateInterinosSection'
+import { useInterinosSpecialtyLegend } from '../../interinos/queries/interinosQueries'
 import { ErrorMessage, StateMessage } from '../../../shared/components/StateMessage'
 import { NotFoundError } from '../../../shared/api/errors'
 
@@ -24,6 +27,8 @@ export function CandidateDetailPage() {
     contextConvocationYear && contextSpecialty && contextTribunalNumber,
   )
 
+  const fromInterinos = searchParams.get('from') === 'interinos'
+
   const {
     data: results,
     isLoading: resultsLoading,
@@ -37,6 +42,13 @@ export function CandidateDetailPage() {
     isError: participationsError,
     refetch: refetchParticipations,
   } = useCandidateParticipations(maskedIdentifier)
+  const {
+    data: interinos,
+    isLoading: interinosLoading,
+    isError: interinosError,
+    refetch: refetchInterinos,
+  } = useCandidateInterinos(maskedIdentifier)
+  const { data: specialtyLegend } = useInterinosSpecialtyLegend()
 
   const { data: list } = useCandidateSearch(
     hasListContext
@@ -49,9 +61,19 @@ export function CandidateDetailPage() {
       : undefined,
   )
 
+  const interinosBackParams = new URLSearchParams()
+  const interinosBlock = searchParams.get('interinosBlock')
+  const interinosSpecialtyCode = searchParams.get('interinosSpecialtyCode')
+  const interinosPage = searchParams.get('interinosPage')
+  if (interinosBlock) interinosBackParams.set('block', interinosBlock)
+  if (interinosSpecialtyCode) interinosBackParams.set('specialtyCode', interinosSpecialtyCode)
+  if (interinosPage) interinosBackParams.set('page', interinosPage)
+
   const backUrl = hasListContext
     ? `/convocations/${encodeURIComponent(contextConvocationYear!)}/specialities/${encodeURIComponent(contextSpecialty!)}/tribunals/${encodeURIComponent(contextTribunalNumber!)}?${searchParams.toString()}`
-    : null
+    : fromInterinos
+      ? `/interinos?${interinosBackParams.toString()}`
+      : null
 
   const currentIndex = list?.findIndex((item) => item.maskedIdentifier === maskedIdentifier) ?? -1
   const previousId = currentIndex > 0 ? list![currentIndex - 1].maskedIdentifier : null
@@ -64,7 +86,7 @@ export function CandidateDetailPage() {
     navigate(`/candidates/${encodeURIComponent(id)}?${searchParams.toString()}`)
   }
 
-  if (resultsLoading || participationsLoading) {
+  if (resultsLoading || participationsLoading || interinosLoading) {
     return <StateMessage title="Cargando aspirante…" />
   }
 
@@ -72,12 +94,20 @@ export function CandidateDetailPage() {
     return <StateMessage title="No se ha encontrado el aspirante solicitado." />
   }
 
-  if (resultsError || participationsError || !results || !participations) {
+  if (
+    resultsError ||
+    participationsError ||
+    interinosError ||
+    !results ||
+    !participations ||
+    !interinos
+  ) {
     return (
       <ErrorMessage
         onRetry={() => {
           refetchResults()
           refetchParticipations()
+          refetchInterinos()
         }}
       />
     )
@@ -101,6 +131,7 @@ export function CandidateDetailPage() {
 
       <CandidateParticipations participations={participations.participations} />
       <CandidateExamResults results={results.results} />
+      <CandidateInterinosSection entries={interinos.entries} specialtyLegend={specialtyLegend} />
 
       <CandidateNavigation
         previousId={previousId}

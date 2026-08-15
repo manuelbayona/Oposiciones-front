@@ -3,6 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
+  useCandidateInterinos,
   useCandidateParticipations,
   useCandidateResults,
   useCandidateSearch,
@@ -66,6 +67,21 @@ describe('useCandidateParticipations', () => {
     vi.stubGlobal('fetch', fetchMock)
 
     renderHook(() => useCandidateParticipations(undefined), { wrapper })
+
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+})
+
+describe('useCandidateInterinos', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('does not fetch when the masked identifier is undefined', () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+
+    renderHook(() => useCandidateInterinos(undefined), { wrapper })
 
     expect(fetchMock).not.toHaveBeenCalled()
   })

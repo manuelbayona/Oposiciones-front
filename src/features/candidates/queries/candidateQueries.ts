@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import {
+  fetchCandidateInterinos,
   fetchCandidateParticipations,
   fetchCandidateResults,
   searchCandidates,
@@ -30,6 +31,14 @@ export function useCandidateParticipations(maskedIdentifier: string | undefined)
   return useQuery({
     queryKey: ['candidateParticipations', maskedIdentifier],
     queryFn: () => fetchCandidateParticipations(maskedIdentifier!),
+    enabled: Boolean(maskedIdentifier),
+  })
+}
+
+export function useCandidateInterinos(maskedIdentifier: string | undefined) {
+  return useQuery({
+    queryKey: ['candidateInterinos', maskedIdentifier],
+    queryFn: () => fetchCandidateInterinos(maskedIdentifier!),
     enabled: Boolean(maskedIdentifier),
   })
 }

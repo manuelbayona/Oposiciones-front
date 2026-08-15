@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
+  fetchCandidateInterinos,
   fetchCandidateParticipations,
   fetchCandidateResults,
   searchCandidates,
@@ -63,5 +64,21 @@ describe('fetchCandidateParticipations', () => {
 
     const requestedUrl = new URL(fetchMock.mock.calls[0][0])
     expect(requestedUrl.pathname).toBe('/api/v1/candidates/***1234**/participations')
+  })
+})
+
+describe('fetchCandidateInterinos', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('requests the interinos endpoint for the given masked identifier', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ entries: [] }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await fetchCandidateInterinos('***1234**')
+
+    const requestedUrl = new URL(fetchMock.mock.calls[0][0])
+    expect(requestedUrl.pathname).toBe('/api/v1/candidates/***1234**/interinos')
   })
 })

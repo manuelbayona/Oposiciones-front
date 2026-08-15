@@ -4,11 +4,23 @@ export function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3 sm:px-6">
-          <Link to="/" className="text-lg font-semibold tracking-tight text-slate-900">
-            OpoData
-          </Link>
-          <span className="text-sm text-slate-500">Entiende tus oposiciones, no solo tu nota.</span>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-x-3 gap-y-1 px-4 py-3 sm:px-6">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <Link to="/" className="text-lg font-semibold tracking-tight text-slate-900">
+              OpoData
+            </Link>
+            <span className="text-sm text-slate-500">
+              Entiende tus oposiciones, no solo tu nota.
+            </span>
+          </div>
+          <nav aria-label="Navegación principal">
+            <Link
+              to="/interinos"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              Listado de interinos
+            </Link>
+          </nav>
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6">
