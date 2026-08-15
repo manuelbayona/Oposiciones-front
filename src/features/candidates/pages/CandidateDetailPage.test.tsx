@@ -40,6 +40,7 @@ const resultsResponse = {
       valid: true,
       extractorVersion: '0.1.0',
       processedAt: '2026-08-13T11:20:50Z',
+      passStatus: 'PASSED',
     },
   ],
 }
