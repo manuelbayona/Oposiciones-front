@@ -13,12 +13,15 @@ export function AppLayout() {
               Entiende tus oposiciones, no solo tu nota.
             </span>
           </div>
-          <nav aria-label="Navegación principal">
+          <nav aria-label="Navegación principal" className="flex items-baseline gap-4">
             <Link
               to="/interinos"
               className="text-sm font-medium text-slate-600 hover:text-slate-900"
             >
               Listado de interinos
+            </Link>
+            <Link to="/buscar" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+              Buscar aspirante
             </Link>
           </nav>
         </div>

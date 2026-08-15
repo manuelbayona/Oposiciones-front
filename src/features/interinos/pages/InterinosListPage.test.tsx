@@ -87,4 +87,37 @@ describe('InterinosListPage', () => {
 
     await waitFor(() => expect(screen.getByText('Candidate detail page')).toBeInTheDocument())
   })
+
+  it('shows the specialty-rank column only when a specialtyCode filter is in the URL', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: string) => {
+        if (url.includes('/interinos/specialties')) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: () => Promise.resolve({ '031': 'Educación infantil' }),
+          })
+        }
+        if (url.includes('/interinos')) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: () =>
+              Promise.resolve({
+                ...searchResponse,
+                items: [{ ...searchResponse.items[0], specialtyRank: 5 }],
+              }),
+          })
+        }
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([]) })
+      }),
+    )
+
+    renderListPage('/interinos?specialtyCode=031')
+
+    await waitFor(() => expect(screen.getByText('VICENTE SANCHEZ, SOFIA')).toBeInTheDocument())
+    expect(screen.getByText('Puesto en la especialidad')).toBeInTheDocument()
+    expect(screen.getByText('5')).toBeInTheDocument()
+  })
 })

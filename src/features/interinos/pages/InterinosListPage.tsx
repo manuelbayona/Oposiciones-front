@@ -76,7 +76,7 @@ export function InterinosListPage() {
         {data && <ResultsCount totalCount={data.totalElements} />}
       </div>
 
-      {isLoading && <TableSkeleton columns={5} />}
+      {isLoading && <TableSkeleton columns={specialtyCode ? 6 : 5} />}
 
       {isError && <ErrorMessage onRetry={() => refetch()} />}
 
@@ -89,6 +89,7 @@ export function InterinosListPage() {
           <InterinosTable
             items={data.items}
             specialtyLegend={specialtyLegend}
+            specialtyFilterActive={Boolean(specialtyCode)}
             onSelectCandidate={handleSelectCandidate}
           />
           <Pagination

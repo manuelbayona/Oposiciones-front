@@ -9,6 +9,7 @@ const entry: InterinosListingEntryItem = {
   maskedIdentifier: '***8381**',
   fullName: 'VICENTE SANCHEZ, SOFIA',
   listPosition: 400,
+  specialtyRank: null,
   accreditedSpecialtyCodes: ['031'],
   block: 'bloque_i',
   totalScore: { rawValue: '9,2900', value: 9.29 },
@@ -23,6 +24,7 @@ describe('InterinosTable', () => {
       <InterinosTable
         items={[entry]}
         specialtyLegend={{ '031': 'Educación infantil' }}
+        specialtyFilterActive={false}
         onSelectCandidate={vi.fn()}
       />,
     )
@@ -37,11 +39,42 @@ describe('InterinosTable', () => {
   it('calls onSelectCandidate with the candidate id when a row is clicked', async () => {
     const onSelectCandidate = vi.fn()
     render(
-      <InterinosTable items={[entry]} specialtyLegend={{}} onSelectCandidate={onSelectCandidate} />,
+      <InterinosTable
+        items={[entry]}
+        specialtyLegend={{}}
+        specialtyFilterActive={false}
+        onSelectCandidate={onSelectCandidate}
+      />,
     )
 
     await userEvent.click(screen.getByRole('button', { name: /VICENTE SANCHEZ, SOFIA/ }))
 
     expect(onSelectCandidate).toHaveBeenCalledWith(1)
+  })
+
+  it('shows the specialty-rank column only when a specialty filter is active', () => {
+    const ranked = { ...entry, specialtyRank: 3 }
+    const { rerender } = render(
+      <InterinosTable
+        items={[ranked]}
+        specialtyLegend={{}}
+        specialtyFilterActive={false}
+        onSelectCandidate={vi.fn()}
+      />,
+    )
+
+    expect(screen.queryByText('Puesto en la especialidad')).not.toBeInTheDocument()
+
+    rerender(
+      <InterinosTable
+        items={[ranked]}
+        specialtyLegend={{}}
+        specialtyFilterActive={true}
+        onSelectCandidate={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Puesto en la especialidad')).toBeInTheDocument()
+    expect(screen.getByText('3')).toBeInTheDocument()
   })
 })

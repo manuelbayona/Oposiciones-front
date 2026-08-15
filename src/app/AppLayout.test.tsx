@@ -17,6 +17,11 @@ describe('AppLayout', () => {
 
     expect(screen.getByRole('link', { name: 'OpoData' })).toHaveAttribute('href', '/')
     expect(screen.getByText('Entiende tus oposiciones, no solo tu nota.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Listado de interinos' })).toHaveAttribute(
+      'href',
+      '/interinos',
+    )
+    expect(screen.getByRole('link', { name: 'Buscar aspirante' })).toHaveAttribute('href', '/buscar')
     expect(screen.getByText('Page content')).toBeInTheDocument()
     expect(
       screen.getByText('Información organizada para entender mejor los procesos selectivos docentes.'),

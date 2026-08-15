@@ -29,6 +29,7 @@ export function CandidateDetailPage() {
   )
 
   const fromInterinos = searchParams.get('from') === 'interinos'
+  const fromSearch = searchParams.get('from') === 'search'
 
   const {
     data: results,
@@ -74,7 +75,11 @@ export function CandidateDetailPage() {
     ? `/convocations/${encodeURIComponent(contextConvocationYear!)}/specialities/${encodeURIComponent(contextSpecialty!)}/tribunals/${encodeURIComponent(contextTribunalNumber!)}?${searchParams.toString()}`
     : fromInterinos
       ? `/interinos?${interinosBackParams.toString()}`
-      : null
+      : fromSearch
+        ? `/buscar${contextSearch ? `?q=${encodeURIComponent(contextSearch)}` : ''}`
+        : null
+
+  const backLabel = fromSearch ? '← Volver a la búsqueda' : '← Volver al listado'
 
   const currentIndex = list?.findIndex((item) => item.id === candidateId) ?? -1
   const previousId = currentIndex > 0 ? list![currentIndex - 1].id : null
@@ -121,7 +126,7 @@ export function CandidateDetailPage() {
           to={backUrl ?? '/'}
           className="text-sm font-medium text-slate-500 hover:text-slate-900"
         >
-          ← Volver al listado
+          {backLabel}
         </Link>
       </div>
 

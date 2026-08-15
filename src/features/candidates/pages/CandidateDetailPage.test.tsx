@@ -157,4 +157,13 @@ describe('CandidateDetailPage', () => {
       ),
     )
   })
+
+  it('links back to the search page, preserving the query, when opened from a search result', async () => {
+    stubFetch()
+
+    renderDetailPage('/candidates/1?from=search&q=Garc%C3%ADa')
+
+    await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
+    expect(screen.getByText('← Volver a la búsqueda')).toHaveAttribute('href', '/buscar?q=Garc%C3%ADa')
+  })
 })
