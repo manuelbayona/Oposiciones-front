@@ -12,7 +12,7 @@ interface CandidateResultsSectionProps {
   convocationYear: number
   specialty: string
   tribunalNumber: string
-  onSelectCandidate: (maskedIdentifier: string, contextParams: URLSearchParams) => void
+  onSelectCandidate: (id: number, contextParams: URLSearchParams) => void
 }
 
 export function CandidateResultsSection({
@@ -47,14 +47,14 @@ export function CandidateResultsSection({
     name: search || undefined,
   })
 
-  function handleSelectCandidate(maskedIdentifier: string) {
+  function handleSelectCandidate(id: number) {
     const context = new URLSearchParams({
       convocationYear: String(convocationYear),
       specialty,
       tribunalNumber,
     })
     if (search) context.set('q', search)
-    onSelectCandidate(maskedIdentifier, context)
+    onSelectCandidate(id, context)
   }
 
   return (

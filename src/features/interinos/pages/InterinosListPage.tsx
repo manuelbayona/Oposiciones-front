@@ -46,12 +46,12 @@ export function InterinosListPage() {
     setSearchParams(next)
   }
 
-  function handleSelectCandidate(maskedIdentifier: string) {
+  function handleSelectCandidate(id: number) {
     const context = new URLSearchParams({ from: 'interinos' })
     if (block) context.set('interinosBlock', block)
     if (specialtyCode) context.set('interinosSpecialtyCode', specialtyCode)
     if (page) context.set('interinosPage', String(page))
-    navigate(`/candidates/${encodeURIComponent(maskedIdentifier)}?${context.toString()}`)
+    navigate(`/candidates/${id}?${context.toString()}`)
   }
 
   return (

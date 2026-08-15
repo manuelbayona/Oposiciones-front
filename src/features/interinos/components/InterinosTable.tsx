@@ -15,7 +15,7 @@ const columnHelper = createColumnHelper<InterinosListingEntryItem>()
 interface InterinosTableProps {
   items: InterinosListingEntryItem[]
   specialtyLegend: SpecialtyLegend | undefined
-  onSelectCandidate: (maskedIdentifier: string) => void
+  onSelectCandidate: (id: number) => void
 }
 
 export function InterinosTable({ items, specialtyLegend, onSelectCandidate }: InterinosTableProps) {
@@ -81,11 +81,11 @@ export function InterinosTable({ items, specialtyLegend, onSelectCandidate }: In
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              onClick={() => onSelectCandidate(row.original.maskedIdentifier)}
+              onClick={() => onSelectCandidate(row.original.candidateId)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault()
-                  onSelectCandidate(row.original.maskedIdentifier)
+                  onSelectCandidate(row.original.candidateId)
                 }
               }}
               tabIndex={0}

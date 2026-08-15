@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
         element: <CandidatesExplorerPage />,
       },
       { path: 'interinos', element: <InterinosListPage /> },
-      { path: 'candidates/:maskedIdentifier', element: <CandidateDetailPage /> },
+      { path: 'candidates/:id', element: <CandidateDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

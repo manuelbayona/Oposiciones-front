@@ -40,14 +40,14 @@ describe('fetchCandidateResults', () => {
     vi.unstubAllGlobals()
   })
 
-  it('requests the results endpoint for the given masked identifier', async () => {
+  it('requests the results endpoint for the given candidate id', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ results: [] }))
     vi.stubGlobal('fetch', fetchMock)
 
-    await fetchCandidateResults('***1234**')
+    await fetchCandidateResults(1234)
 
     const requestedUrl = new URL(fetchMock.mock.calls[0][0])
-    expect(requestedUrl.pathname).toBe('/api/v1/candidates/***1234**/results')
+    expect(requestedUrl.pathname).toBe('/api/v1/candidates/1234/results')
   })
 })
 
@@ -56,14 +56,14 @@ describe('fetchCandidateParticipations', () => {
     vi.unstubAllGlobals()
   })
 
-  it('requests the participations endpoint for the given masked identifier', async () => {
+  it('requests the participations endpoint for the given candidate id', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ participations: [] }))
     vi.stubGlobal('fetch', fetchMock)
 
-    await fetchCandidateParticipations('***1234**')
+    await fetchCandidateParticipations(1234)
 
     const requestedUrl = new URL(fetchMock.mock.calls[0][0])
-    expect(requestedUrl.pathname).toBe('/api/v1/candidates/***1234**/participations')
+    expect(requestedUrl.pathname).toBe('/api/v1/candidates/1234/participations')
   })
 })
 
@@ -72,13 +72,13 @@ describe('fetchCandidateInterinos', () => {
     vi.unstubAllGlobals()
   })
 
-  it('requests the interinos endpoint for the given masked identifier', async () => {
+  it('requests the interinos endpoint for the given candidate id', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ entries: [] }))
     vi.stubGlobal('fetch', fetchMock)
 
-    await fetchCandidateInterinos('***1234**')
+    await fetchCandidateInterinos(1234)
 
     const requestedUrl = new URL(fetchMock.mock.calls[0][0])
-    expect(requestedUrl.pathname).toBe('/api/v1/candidates/***1234**/interinos')
+    expect(requestedUrl.pathname).toBe('/api/v1/candidates/1234/interinos')
   })
 })

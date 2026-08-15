@@ -91,22 +91,22 @@ e2e/                     # tests Playwright
 /convocations/:convocationYear
 /convocations/:convocationYear/specialities/:specialty
 /convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber
-/candidates/:maskedIdentifier
+/candidates/:id
 /interinos                                                                     → listado definitivo de interinos, paginado y filtrable por bloque/especialidad
 ```
 
-El listado de aspirantes y el listado de interinos mantienen sus filtros y página como query params, de forma que la URL es siempre compartible y recargable. Al abrir un aspirante desde cualquiera de los dos listados, el contexto (filtros de convocatoria/especialidad/tribunal, o de bloque/especialidad de interinos) se traslada como query params de `/candidates/:maskedIdentifier`, lo que permite volver atrás sin perder el estado. La navegación al aspirante anterior/siguiente solo está disponible viniendo del listado de aspirantes (que se carga completo); el listado de interinos pagina del lado del servidor sobre miles de filas reales, por lo que no ofrece esa navegación — ver "Limitaciones conocidas".
+El listado de aspirantes y el listado de interinos mantienen sus filtros y página como query params, de forma que la URL es siempre compartible y recargable. Al abrir un aspirante desde cualquiera de los dos listados, el contexto (filtros de convocatoria/especialidad/tribunal, o de bloque/especialidad de interinos) se traslada como query params de `/candidates/:id`, lo que permite volver atrás sin perder el estado. La navegación al aspirante anterior/siguiente solo está disponible viniendo del listado de aspirantes (que se carga completo); el listado de interinos pagina del lado del servidor sobre miles de filas reales, por lo que no ofrece esa navegación — ver "Limitaciones conocidas".
 
 ## Contrato con el backend
 
 El frontend consume el contrato real y actual del backend, sin campos ni capacidades especulativas:
 
-- `GET /api/v1/candidates?name=&specialty=&tribunalNumber=&convocationYear=` → `{maskedIdentifier, fullName}[]`, sin paginación ni ordenación.
-- `GET /api/v1/candidates/{maskedIdentifier}/results` / `/participations` / `/interinos` → detalle del aspirante.
+- `GET /api/v1/candidates?name=&specialty=&tribunalNumber=&convocationYear=` → `{id, maskedIdentifier, fullName}[]`, sin paginación ni ordenación.
+- `GET /api/v1/candidates/{id}/results` / `/participations` / `/interinos` → detalle del aspirante.
 - `GET /api/v1/interinos?block=&specialtyCode=&page=&size=` → listado paginado por el servidor.
 - `GET /api/v1/interinos/specialties` → código → nombre de especialidad, para etiquetar `accreditedSpecialtyCodes`.
 
-El aspirante nunca se identifica por un id numérico: siempre por su `maskedIdentifier` (p. ej. `***1234**`). Ver `src/features/candidates/model/candidate.ts` e `src/features/interinos/model/interinos.ts` para el contrato de tipos completo.
+El aspirante se identifica por el `id` numérico del backend (`Candidate.id`), no por su `maskedIdentifier`: un mismo `maskedIdentifier` puede corresponder a varias personas distintas (ver ADR-009 en `Oposiciones-backend`), así que ya no es una clave de ruta válida por sí sola. `maskedIdentifier` y `fullName` se siguen mostrando en el detalle, pero solo `id` navega. Ver `src/features/candidates/model/candidate.ts` e `src/features/interinos/model/interinos.ts` para el contrato de tipos completo.
 
 ## Limitaciones conocidas
 

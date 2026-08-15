@@ -9,8 +9,8 @@ export function CandidatesExplorerPage() {
 
   const hasFullSelection = Boolean(convocationYear && specialty && tribunalNumber)
 
-  function handleSelectCandidate(maskedIdentifier: string, contextParams: URLSearchParams) {
-    navigate(`/candidates/${encodeURIComponent(maskedIdentifier)}?${contextParams.toString()}`)
+  function handleSelectCandidate(id: number, contextParams: URLSearchParams) {
+    navigate(`/candidates/${id}?${contextParams.toString()}`)
   }
 
   return (

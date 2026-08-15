@@ -14,7 +14,8 @@ import { ErrorMessage, StateMessage } from '../../../shared/components/StateMess
 import { NotFoundError } from '../../../shared/api/errors'
 
 export function CandidateDetailPage() {
-  const { maskedIdentifier } = useParams()
+  const { id } = useParams()
+  const candidateId = id !== undefined ? Number(id) : undefined
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
@@ -35,19 +36,19 @@ export function CandidateDetailPage() {
     isError: resultsError,
     error: resultsErrorDetail,
     refetch: refetchResults,
-  } = useCandidateResults(maskedIdentifier)
+  } = useCandidateResults(candidateId)
   const {
     data: participations,
     isLoading: participationsLoading,
     isError: participationsError,
     refetch: refetchParticipations,
-  } = useCandidateParticipations(maskedIdentifier)
+  } = useCandidateParticipations(candidateId)
   const {
     data: interinos,
     isLoading: interinosLoading,
     isError: interinosError,
     refetch: refetchInterinos,
-  } = useCandidateInterinos(maskedIdentifier)
+  } = useCandidateInterinos(candidateId)
   const { data: specialtyLegend } = useInterinosSpecialtyLegend()
 
   const { data: list } = useCandidateSearch(
@@ -75,15 +76,15 @@ export function CandidateDetailPage() {
       ? `/interinos?${interinosBackParams.toString()}`
       : null
 
-  const currentIndex = list?.findIndex((item) => item.maskedIdentifier === maskedIdentifier) ?? -1
-  const previousId = currentIndex > 0 ? list![currentIndex - 1].maskedIdentifier : null
+  const currentIndex = list?.findIndex((item) => item.id === candidateId) ?? -1
+  const previousId = currentIndex > 0 ? list![currentIndex - 1].id : null
   const nextId =
     currentIndex >= 0 && currentIndex < (list?.length ?? 0) - 1
-      ? list![currentIndex + 1].maskedIdentifier
+      ? list![currentIndex + 1].id
       : null
 
-  function navigateToCandidate(id: string) {
-    navigate(`/candidates/${encodeURIComponent(id)}?${searchParams.toString()}`)
+  function navigateToCandidate(id: number) {
+    navigate(`/candidates/${id}?${searchParams.toString()}`)
   }
 
   if (resultsLoading || participationsLoading || interinosLoading) {
