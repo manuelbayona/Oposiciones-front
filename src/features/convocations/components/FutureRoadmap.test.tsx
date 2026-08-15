@@ -11,6 +11,6 @@ describe('FutureRoadmap', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Comparación de resultados con convocatorias anteriores.')).toBeInTheDocument()
     expect(screen.getByText('Estadísticas por tribunal y especialidad.')).toBeInTheDocument()
-    expect(screen.getAllByRole('listitem')).toHaveLength(9)
+    expect(screen.getAllByRole('listitem')).toHaveLength(8)
   })
 })

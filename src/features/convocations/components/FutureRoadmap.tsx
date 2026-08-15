@@ -4,7 +4,6 @@ const UPCOMING_FEATURES = [
   'Evolución de méritos.',
   'Posición obtenida en cada convocatoria.',
   'Identificación de aspirantes que han obtenido plaza.',
-  'Posición en las listas de interinos.',
   'Evolución histórica dentro de las listas de interinidad.',
   'Distancia respecto a la última plaza obtenida.',
   'Estadísticas por tribunal y especialidad.',

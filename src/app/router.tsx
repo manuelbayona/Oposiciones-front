@@ -4,6 +4,7 @@ import { NotFoundPage } from './NotFoundPage'
 import { HomePage } from '../features/convocations/pages/HomePage'
 import { CandidatesExplorerPage } from '../features/candidates/pages/CandidatesExplorerPage'
 import { CandidateDetailPage } from '../features/candidates/pages/CandidateDetailPage'
+import { InterinosListPage } from '../features/interinos/pages/InterinosListPage'
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
         path: 'convocations/:convocationYear/specialities/:specialty/tribunals/:tribunalNumber',
         element: <CandidatesExplorerPage />,
       },
+      { path: 'interinos', element: <InterinosListPage /> },
       { path: 'candidates/:maskedIdentifier', element: <CandidateDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

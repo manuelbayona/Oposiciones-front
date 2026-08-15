@@ -5,6 +5,7 @@ import type {
   CandidateSearchParams,
   CandidateSummary,
 } from '../model/candidate'
+import type { CandidateInterinosResponse } from '../../interinos/model/interinos'
 
 export function searchCandidates(params: CandidateSearchParams): Promise<CandidateSummary[]> {
   return apiGet<CandidateSummary[]>('/candidates', {
@@ -26,5 +27,13 @@ export function fetchCandidateParticipations(
 ): Promise<CandidateParticipationsResponse> {
   return apiGet<CandidateParticipationsResponse>(
     `/candidates/${encodeURIComponent(maskedIdentifier)}/participations`,
+  )
+}
+
+export function fetchCandidateInterinos(
+  maskedIdentifier: string,
+): Promise<CandidateInterinosResponse> {
+  return apiGet<CandidateInterinosResponse>(
+    `/candidates/${encodeURIComponent(maskedIdentifier)}/interinos`,
   )
 }

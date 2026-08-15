@@ -58,6 +58,12 @@ const participationsResponse = {
   ],
 }
 
+const interinosResponse = {
+  maskedIdentifier: '***1234**',
+  fullName: 'García López, María',
+  entries: [],
+}
+
 function stubFetch(overrides: (url: string) => Response | undefined = () => undefined) {
   vi.stubGlobal(
     'fetch',
@@ -76,6 +82,16 @@ function stubFetch(overrides: (url: string) => Response | undefined = () => unde
           ok: true,
           status: 200,
           json: () => Promise.resolve(participationsResponse),
+        })
+      }
+      if (url.includes('/interinos/specialties')) {
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}) })
+      }
+      if (url.includes('/interinos')) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(interinosResponse),
         })
       }
       return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve([]) })
