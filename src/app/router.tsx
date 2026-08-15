@@ -4,6 +4,7 @@ import { NotFoundPage } from './NotFoundPage'
 import { HomePage } from '../features/convocations/pages/HomePage'
 import { CandidatesExplorerPage } from '../features/candidates/pages/CandidatesExplorerPage'
 import { CandidateDetailPage } from '../features/candidates/pages/CandidateDetailPage'
+import { CandidateSearchPage } from '../features/candidates/pages/CandidateSearchPage'
 import { InterinosListPage } from '../features/interinos/pages/InterinosListPage'
 
 export const router = createBrowserRouter([
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
         element: <CandidatesExplorerPage />,
       },
       { path: 'interinos', element: <InterinosListPage /> },
+      { path: 'buscar', element: <CandidateSearchPage /> },
       { path: 'candidates/:id', element: <CandidateDetailPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

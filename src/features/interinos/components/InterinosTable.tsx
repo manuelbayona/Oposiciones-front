@@ -15,10 +15,16 @@ const columnHelper = createColumnHelper<InterinosListingEntryItem>()
 interface InterinosTableProps {
   items: InterinosListingEntryItem[]
   specialtyLegend: SpecialtyLegend | undefined
+  specialtyFilterActive: boolean
   onSelectCandidate: (id: number) => void
 }
 
-export function InterinosTable({ items, specialtyLegend, onSelectCandidate }: InterinosTableProps) {
+export function InterinosTable({
+  items,
+  specialtyLegend,
+  specialtyFilterActive,
+  onSelectCandidate,
+}: InterinosTableProps) {
   const columns = useMemo(
     () => [
       columnHelper.accessor('listPosition', {
@@ -53,8 +59,20 @@ export function InterinosTable({ items, specialtyLegend, onSelectCandidate }: In
           </span>
         ),
       }),
+      ...(specialtyFilterActive
+        ? [
+            columnHelper.accessor('specialtyRank', {
+              header: 'Puesto en la especialidad',
+              cell: (info) => (
+                <span className="tabular-nums font-medium text-slate-900">
+                  {formatPosition(info.getValue())}
+                </span>
+              ),
+            }),
+          ]
+        : []),
     ],
-    [specialtyLegend],
+    [specialtyLegend, specialtyFilterActive],
   )
 
   const table = useReactTable({ data: items, columns, getCoreRowModel: getCoreRowModel() })

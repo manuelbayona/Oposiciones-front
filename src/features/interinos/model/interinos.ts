@@ -17,12 +17,17 @@ export interface InterinosSearchParams {
  * highestPassedExamGrade/pointsFromPassedOppositionsSince2000 are only present for
  * block = "bloque_i"; currentExamGrade only for "bloque_ii" — null (not an empty ScoreItem)
  * otherwise. The backend never decides which block "won"; both are shown as published.
+ *
+ * specialtyRank is the candidate's 1-based position among only the entries matching the current
+ * search's filters, in the listing's own official order (listPosition) — null unless a
+ * specialtyCode filter is applied, since a rank relative to "every specialty" isn't meaningful.
  */
 export interface InterinosListingEntryItem {
   candidateId: number
   maskedIdentifier: string
   fullName: string
   listPosition: number
+  specialtyRank: number | null
   accreditedSpecialtyCodes: string[]
   block: string
   totalScore: ScoreItem
