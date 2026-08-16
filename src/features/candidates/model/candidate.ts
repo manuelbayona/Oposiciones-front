@@ -56,6 +56,13 @@ export interface ExamResultItem {
   extractorVersion: string
   processedAt: string
   passStatus: PassStatus
+  /**
+   * Distinguishes a provisional listing from its definitive correction for the same phase.
+   * `null` when the source document's header states neither (or predates a schema version that
+   * captured this) — two results for the same phase can legitimately report different scores, so
+   * the UI must label which one is current rather than showing them as unlabeled duplicates.
+   */
+  isDefinitive: boolean | null
 }
 
 /** Matches GET /api/v1/candidates/{id}/results. */
