@@ -30,9 +30,12 @@ const resultsResponse = {
       sourceDocument: '/data/EI-25.pdf',
       documentType: 'calificaciones',
       examName: 'PRIMERA PRUEBA',
+      phase: 'primera_prueba',
       body: 'MAESTROS',
       specialty: 'EDUCACIÓN INFANTIL',
       tribunalNumber: '4',
+      convocationYear: 2026,
+      convocationCode: null,
       accessCode: '1',
       parts: [{ partCode: 'A', score: { rawValue: '8,7500', value: 8.75 } }],
       totalScore: { rawValue: '8,7500', value: 8.75 },
@@ -114,7 +117,8 @@ describe('CandidateDetailPage', () => {
     renderDetailPage('/candidates/1')
 
     await waitFor(() => expect(screen.getByText('García López, María')).toBeInTheDocument())
-    expect(screen.getByText('PRIMERA PRUEBA')).toBeInTheDocument()
+    expect(screen.getByText('Convocatoria 2026')).toBeInTheDocument()
+    expect(screen.getByText('Primera prueba')).toBeInTheDocument()
     expect(screen.getByText('7,20')).toBeInTheDocument()
   })
 

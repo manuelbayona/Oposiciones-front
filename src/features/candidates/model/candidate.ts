@@ -31,14 +31,23 @@ export interface ExamPartItem {
  */
 export type PassStatus = 'PASSED' | 'NOT_PASSED' | 'UNKNOWN'
 
-/** Matches ExamResultItem in CandidateResultsResponse. */
+/**
+ * Matches ExamResultItem in CandidateResultsResponse. `phase` is the normalized classification of
+ * `examName` ("primera_prueba"/"segunda_prueba"/"prueba_unica"/"fase_oposicion"), `null` when the
+ * text doesn't match any recognised phase — `examName` (the raw publication wording) is kept for
+ * traceability, but the UI should prefer `phase` for display since the raw wording varies between
+ * a provisional listing, its definitive revision, and a "quienes han superado" listing.
+ */
 export interface ExamResultItem {
   sourceDocument: string
   documentType: string
   examName: string
+  phase: string | null
   body: string
   specialty: string
   tribunalNumber: string
+  convocationYear: number
+  convocationCode: string | null
   accessCode: string
   parts: ExamPartItem[]
   totalScore: ScoreItem
