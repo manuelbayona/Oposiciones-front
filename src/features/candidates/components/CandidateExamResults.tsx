@@ -91,11 +91,35 @@ function PassStatusLabel({ passStatus }: { passStatus: PassStatus }) {
   )
 }
 
+/**
+ * Shown only when the source document's header states it explicitly — `null` means the header
+ * said neither, so nothing is shown rather than a guess. This is what lets two results for the
+ * same phase (a provisional listing and its later correction) appear as distinct entries instead
+ * of unlabeled duplicates.
+ */
+function DefinitiveStatusLabel({ isDefinitive }: { isDefinitive: boolean | null }) {
+  if (isDefinitive === null) {
+    return null
+  }
+  return (
+    <span
+      className={
+        isDefinitive
+          ? 'inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-xs font-medium text-sky-700'
+          : 'inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-medium text-slate-500'
+      }
+    >
+      {isDefinitive ? 'Definitiva' : 'Provisional'}
+    </span>
+  )
+}
+
 function ExamPhaseResult({ result }: { result: ExamResultItem }) {
   return (
     <li className="flex flex-col gap-2 rounded-md border border-slate-100 bg-slate-50 p-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <p className="font-medium text-slate-900">{phaseLabel(result)}</p>
+        <DefinitiveStatusLabel isDefinitive={result.isDefinitive} />
         <AttendanceLabel attendanceStatus={result.attendanceStatus} />
         <PassStatusLabel passStatus={result.passStatus} />
         {!result.valid && (

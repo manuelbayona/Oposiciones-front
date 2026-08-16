@@ -24,6 +24,7 @@ const twoPartResult: ExamResultItem = {
   extractorVersion: '0.1.0',
   processedAt: '2026-08-13T11:20:50Z',
   passStatus: 'UNKNOWN',
+  isDefinitive: null,
 }
 
 describe('CandidateExamResults', () => {
@@ -136,5 +137,44 @@ describe('CandidateExamResults', () => {
 
     expect(screen.queryByText('Aprobó')).not.toBeInTheDocument()
     expect(screen.queryByText('No aprobó')).not.toBeInTheDocument()
+  })
+
+  it('shows a "Definitiva" badge when the source document is a definitive listing', () => {
+    render(<CandidateExamResults results={[{ ...twoPartResult, isDefinitive: true }]} />)
+
+    expect(screen.getByText('Definitiva')).toBeInTheDocument()
+  })
+
+  it('shows a "Provisional" badge when the source document is a provisional listing', () => {
+    render(<CandidateExamResults results={[{ ...twoPartResult, isDefinitive: false }]} />)
+
+    expect(screen.getByText('Provisional')).toBeInTheDocument()
+  })
+
+  it('shows no definitive/provisional badge when the header states neither', () => {
+    render(<CandidateExamResults results={[{ ...twoPartResult, isDefinitive: null }]} />)
+
+    expect(screen.queryByText('Definitiva')).not.toBeInTheDocument()
+    expect(screen.queryByText('Provisional')).not.toBeInTheDocument()
+  })
+
+  it('lets two results for the same phase and convocation be told apart by their definitive status', () => {
+    const provisional: ExamResultItem = {
+      ...twoPartResult,
+      sourceDocument: '/data/EI-25-provisional.pdf',
+      totalScore: { rawValue: '6,7300', value: 6.73 },
+      isDefinitive: false,
+    }
+    const definitive: ExamResultItem = {
+      ...twoPartResult,
+      sourceDocument: '/data/EI-25-definitiva.pdf',
+      totalScore: { rawValue: '6,8600', value: 6.86 },
+      isDefinitive: true,
+    }
+
+    render(<CandidateExamResults results={[provisional, definitive]} />)
+
+    expect(screen.getByText('Provisional')).toBeInTheDocument()
+    expect(screen.getByText('Definitiva')).toBeInTheDocument()
   })
 })
