@@ -1,4 +1,4 @@
-import { formatScore } from '../../../shared/utils/format'
+import { formatPosition, formatScore } from '../../../shared/utils/format'
 import { formatBlock } from '../utils/block'
 import { SpecialtyBadges } from './SpecialtyBadges'
 import type { InterinosEntryItem, SpecialtyLegend } from '../model/interinos'
@@ -35,13 +35,16 @@ export function CandidateInterinosSection({
             className="flex flex-col gap-2 border-t border-slate-100 pt-4 text-sm first:border-0 first:pt-0"
           >
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-medium text-slate-900">Nº orden {entry.listPosition}</p>
+              <p className="font-medium text-slate-900">Nº orden {formatPosition(entry.overallRank)}</p>
               <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-600">
                 {formatBlock(entry.block)}
               </span>
               {!entry.valid && (
-                <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
-                  Con incidencias de validación
+                <span
+                  title="El documento oficial publicado no incluye todos los datos de este registro."
+                  className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700"
+                >
+                  Datos incompletos
                 </span>
               )}
             </div>

@@ -99,8 +99,11 @@ function ExamPhaseResult({ result }: { result: ExamResultItem }) {
         <AttendanceLabel attendanceStatus={result.attendanceStatus} />
         <PassStatusLabel passStatus={result.passStatus} />
         {!result.valid && (
-          <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
-            Con incidencias de validación
+          <span
+            title="El documento oficial publicado no incluye todos los datos de este resultado."
+            className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700"
+          >
+            Datos incompletos
           </span>
         )}
       </div>

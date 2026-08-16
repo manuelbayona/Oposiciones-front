@@ -12,7 +12,8 @@ const teachingExperience = {
 }
 
 const bloqueIEntry: InterinosEntryItem = {
-  listPosition: 400,
+  listPosition: 26034300,
+  overallRank: 3430,
   accreditedSpecialtyCodes: ['031'],
   block: 'bloque_i',
   teachingExperience,
@@ -41,7 +42,10 @@ describe('CandidateInterinosSection', () => {
       />,
     )
 
-    expect(screen.getByText('Nº orden 400')).toBeInTheDocument()
+    // Regression test: the raw listPosition (26034300, the document's internal reference code)
+    // must never be shown as "Nº orden" - only the derived overallRank (the real position).
+    expect(screen.getByText('Nº orden 3.430')).toBeInTheDocument()
+    expect(screen.queryByText(/26034300/)).not.toBeInTheDocument()
     expect(screen.getByText('Bloque I')).toBeInTheDocument()
     expect(screen.getByText('Educación infantil')).toBeInTheDocument()
     expect(screen.getByText('Nota máxima superada')).toBeInTheDocument()
@@ -67,7 +71,7 @@ describe('CandidateInterinosSection', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('flags entries with validation issues', () => {
+  it('flags invalid entries with a plain-language label, not technical validation jargon', () => {
     render(
       <CandidateInterinosSection
         entries={[{ ...bloqueIEntry, valid: false }]}
@@ -75,6 +79,7 @@ describe('CandidateInterinosSection', () => {
       />,
     )
 
-    expect(screen.getByText('Con incidencias de validación')).toBeInTheDocument()
+    expect(screen.getByText('Datos incompletos')).toBeInTheDocument()
+    expect(screen.queryByText(/validaci/i)).not.toBeInTheDocument()
   })
 })

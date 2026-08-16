@@ -8,7 +8,8 @@ const entry: InterinosListingEntryItem = {
   candidateId: 1,
   maskedIdentifier: '***8381**',
   fullName: 'VICENTE SANCHEZ, SOFIA',
-  listPosition: 400,
+  listPosition: 26034300,
+  overallRank: 3430,
   specialtyRank: null,
   accreditedSpecialtyCodes: ['031'],
   block: 'bloque_i',
@@ -29,7 +30,10 @@ describe('InterinosTable', () => {
       />,
     )
 
-    expect(screen.getByText('400')).toBeInTheDocument()
+    // Regression test: the table's "Nº orden" column must show the derived overallRank (the
+    // real position), never the raw listPosition (the document's internal reference code).
+    expect(screen.getByText('3.430')).toBeInTheDocument()
+    expect(screen.queryByText(/26034300/)).not.toBeInTheDocument()
     expect(screen.getByText('VICENTE SANCHEZ, SOFIA')).toBeInTheDocument()
     expect(screen.getByText('Bloque I')).toBeInTheDocument()
     expect(screen.getByText('Educación infantil')).toBeInTheDocument()

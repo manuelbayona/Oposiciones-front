@@ -27,7 +27,7 @@ export function InterinosTable({
 }: InterinosTableProps) {
   const columns = useMemo(
     () => [
-      columnHelper.accessor('listPosition', {
+      columnHelper.accessor('overallRank', {
         header: 'Nº orden',
         cell: (info) => (
           <span className="tabular-nums text-slate-600">{formatPosition(info.getValue())}</span>

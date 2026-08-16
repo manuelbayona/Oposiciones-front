@@ -18,15 +18,21 @@ export interface InterinosSearchParams {
  * block = "bloque_i"; currentExamGrade only for "bloque_ii" — null (not an empty ScoreItem)
  * otherwise. The backend never decides which block "won"; both are shown as published.
  *
+ * listPosition is the raw "N LISTA" value the source document itself prints — an internal
+ * document reference code (e.g. 26034300), not a human-readable rank; kept for traceability but
+ * not meant for display. overallRank is the candidate's actual 1-based position within the whole
+ * listing — use this to show "Nº de orden".
+ *
  * specialtyRank is the candidate's 1-based position among only the entries matching the current
- * search's filters, in the listing's own official order (listPosition) — null unless a
- * specialtyCode filter is applied, since a rank relative to "every specialty" isn't meaningful.
+ * search's filters, in the listing's own official order — null unless a specialtyCode filter is
+ * applied, since a rank relative to "every specialty" isn't meaningful.
  */
 export interface InterinosListingEntryItem {
   candidateId: number
   maskedIdentifier: string
   fullName: string
   listPosition: number
+  overallRank: number | null
   specialtyRank: number | null
   accreditedSpecialtyCodes: string[]
   block: string
@@ -54,9 +60,14 @@ export interface TeachingExperienceItem {
   total: ScoreItem
 }
 
-/** Matches InterinosEntryItem in CandidateInterinosResponse. */
+/**
+ * Matches InterinosEntryItem in CandidateInterinosResponse. listPosition is the raw document
+ * reference code (kept for traceability, not for display) — overallRank is the candidate's
+ * actual 1-based position within the listing; show this as "Nº de orden".
+ */
 export interface InterinosEntryItem {
   listPosition: number
+  overallRank: number | null
   accreditedSpecialtyCodes: string[]
   block: string
   teachingExperience: TeachingExperienceItem
