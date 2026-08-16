@@ -112,10 +112,11 @@ describe('CandidateExamResults', () => {
     expect(screen.queryByText('Nota total')).not.toBeInTheDocument()
   })
 
-  it('flags results with validation issues', () => {
+  it('flags invalid results with a plain-language label, not technical validation jargon', () => {
     render(<CandidateExamResults results={[{ ...twoPartResult, valid: false }]} />)
 
-    expect(screen.getByText('Con incidencias de validación')).toBeInTheDocument()
+    expect(screen.getByText('Datos incompletos')).toBeInTheDocument()
+    expect(screen.queryByText(/validaci/i)).not.toBeInTheDocument()
   })
 
   it('shows an "Aprobó" badge when the candidate passed', () => {

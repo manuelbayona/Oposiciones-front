@@ -18,8 +18,12 @@ describe('formatScore', () => {
 })
 
 describe('formatPosition', () => {
-  it('formats a position as a plain integer string', () => {
+  it('formats a small position as a plain integer string', () => {
     expect(formatPosition(5)).toBe('5')
+  })
+
+  it('formats a large position with Spanish thousands separators', () => {
+    expect(formatPosition(3430)).toBe('3.430')
   })
 
   it('renders missing positions as an em dash', () => {
