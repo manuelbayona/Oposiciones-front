@@ -1,3 +1,4 @@
+import { Badge } from '../../../shared/components/Badge'
 import { formatPosition, formatScore } from '../../../shared/utils/format'
 import { formatBlock } from '../utils/block'
 import { SpecialtyBadges } from './SpecialtyBadges'
@@ -40,12 +41,12 @@ export function CandidateInterinosSection({
                 {formatBlock(entry.block)}
               </span>
               {!entry.valid && (
-                <span
+                <Badge
+                  tone="warning"
                   title="El documento oficial publicado no incluye todos los datos de este registro."
-                  className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700"
                 >
                   Datos incompletos
-                </span>
+                </Badge>
               )}
             </div>
 

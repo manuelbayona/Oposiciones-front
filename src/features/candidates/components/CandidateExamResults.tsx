@@ -1,3 +1,4 @@
+import { Badge } from '../../../shared/components/Badge'
 import { formatScore } from '../../../shared/utils/format'
 import type { ExamResultItem, PassStatus } from '../model/candidate'
 
@@ -27,12 +28,14 @@ function phaseRank(phase: string | null): number {
 }
 
 interface ConvocationGroup {
-  convocationYear: number
-  convocationCode: string | null
   results: ExamResultItem[]
 }
 
-/** Results are grouped by convocation (ascending) and, within each, ordered by exam phase. */
+/**
+ * Results are grouped by convocation (ascending) and, within each, ordered by exam phase.
+ * `convocationYear`/`convocationCode` aren't stored on the group itself — every result in
+ * `results` already carries the same values, since that's what the grouping is keyed on.
+ */
 function groupByConvocation(results: ExamResultItem[]): ConvocationGroup[] {
   const groups = new Map<number, ConvocationGroup>()
   for (const result of results) {
@@ -40,31 +43,14 @@ function groupByConvocation(results: ExamResultItem[]): ConvocationGroup[] {
     if (group) {
       group.results.push(result)
     } else {
-      groups.set(result.convocationYear, {
-        convocationYear: result.convocationYear,
-        convocationCode: result.convocationCode,
-        results: [result],
-      })
+      groups.set(result.convocationYear, { results: [result] })
     }
   }
   return [...groups.values()]
-    .sort((a, b) => a.convocationYear - b.convocationYear)
+    .sort((a, b) => a.results[0].convocationYear - b.results[0].convocationYear)
     .map((group) => ({
-      ...group,
       results: [...group.results].sort((a, b) => phaseRank(a.phase) - phaseRank(b.phase)),
     }))
-}
-
-/**
- * `attendanceStatus` is displayed verbatim, never color-coded — that reflects only whether the
- * candidate showed up, not whether they passed.
- */
-function AttendanceLabel({ attendanceStatus }: { attendanceStatus: string }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-medium text-slate-600">
-      {attendanceStatus}
-    </span>
-  )
 }
 
 /**
@@ -78,17 +64,7 @@ function PassStatusLabel({ passStatus }: { passStatus: PassStatus }) {
     return null
   }
   const isPassed = passStatus === 'PASSED'
-  return (
-    <span
-      className={
-        isPassed
-          ? 'inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700'
-          : 'inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700'
-      }
-    >
-      {isPassed ? 'Aprobó' : 'No aprobó'}
-    </span>
-  )
+  return <Badge tone={isPassed ? 'positive' : 'negative'}>{isPassed ? 'Aprobó' : 'No aprobó'}</Badge>
 }
 
 /**
@@ -102,15 +78,9 @@ function DefinitiveStatusLabel({ isDefinitive }: { isDefinitive: boolean | null 
     return null
   }
   return (
-    <span
-      className={
-        isDefinitive
-          ? 'inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-xs font-medium text-sky-700'
-          : 'inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-medium text-slate-500'
-      }
-    >
+    <Badge tone={isDefinitive ? 'info' : 'neutral'}>
       {isDefinitive ? 'Definitiva' : 'Provisional'}
-    </span>
+    </Badge>
   )
 }
 
@@ -120,15 +90,17 @@ function ExamPhaseResult({ result }: { result: ExamResultItem }) {
       <div className="flex flex-wrap items-center gap-2">
         <p className="font-medium text-slate-900">{phaseLabel(result)}</p>
         <DefinitiveStatusLabel isDefinitive={result.isDefinitive} />
-        <AttendanceLabel attendanceStatus={result.attendanceStatus} />
+        {/* attendanceStatus is displayed verbatim, never color-coded — that reflects only
+            whether the candidate showed up, not whether they passed. */}
+        <Badge tone="neutral">{result.attendanceStatus}</Badge>
         <PassStatusLabel passStatus={result.passStatus} />
         {!result.valid && (
-          <span
+          <Badge
+            tone="warning"
             title="El documento oficial publicado no incluye todos los datos de este resultado."
-            className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700"
           >
             Datos incompletos
-          </span>
+          </Badge>
         )}
       </div>
       <dl className="flex flex-col gap-1.5">
@@ -173,11 +145,11 @@ export function CandidateExamResults({ results }: { results: ExamResultItem[] })
       <ul className="flex flex-col gap-5">
         {groups.map((group) => (
           <li
-            key={group.convocationYear}
+            key={group.results[0].convocationYear}
             className="flex flex-col gap-3 border-t border-slate-100 pt-4 first:border-0 first:pt-0"
           >
             <p className="text-sm font-semibold text-slate-900">
-              Convocatoria {group.convocationCode ?? group.convocationYear}
+              Convocatoria {group.results[0].convocationCode ?? group.results[0].convocationYear}
             </p>
             <ul className="flex flex-col gap-3">
               {group.results.map((result) => (
