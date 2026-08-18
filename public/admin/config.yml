@@ -1,0 +1,91 @@
+# Decap CMS config for the OpoData homepage copy.
+#
+# Local editing: run `npm run cms` alongside `npm run dev`, then open
+# http://localhost:5173/admin/ — `local_backend: true` routes edits through the
+# local decap-server proxy, which commits straight to this git working copy, no
+# OAuth needed. `backend` below is only used once the site is actually deployed
+# and this admin panel is reached over the real domain.
+backend:
+  name: github
+  repo: manuelbayona/oposiciones-front
+  branch: main
+
+local_backend: true
+
+media_folder: "public/images/homepage"
+public_folder: "/images/homepage"
+
+collections:
+  - name: "homepage"
+    label: "Portada"
+    files:
+      - name: "hero"
+        label: "Cabecera"
+        file: "src/content/homepage/hero.json"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Subtítulo", name: "subtitle", widget: "text" }
+          - { label: "Texto del botón", name: "ctaLabel", widget: "string" }
+          - { label: "Enlace del botón", name: "ctaHref", widget: "string" }
+
+      - name: "intro"
+        label: "Introducción"
+        file: "src/content/homepage/intro.json"
+        fields:
+          - label: "Párrafos"
+            name: "paragraphs"
+            widget: "list"
+
+      - name: "value-props"
+        label: "Qué puedes hacer"
+        file: "src/content/homepage/value-props.json"
+        fields:
+          - { label: "Título de la sección", name: "heading", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text" }
+          - label: "Tarjetas"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Título", name: "title", widget: "string" }
+              - { label: "Descripción", name: "description", widget: "text" }
+
+      - name: "future-roadmap"
+        label: "Próximas funcionalidades"
+        file: "src/content/homepage/future-roadmap.json"
+        fields:
+          - { label: "Título de la sección", name: "heading", widget: "string" }
+          - label: "Párrafos introductorios"
+            name: "introParagraphs"
+            widget: "list"
+          - { label: "Texto de la tarjeta", name: "cardIntro", widget: "text" }
+          - { label: "Etiqueta de la lista", name: "featuresLabel", widget: "string" }
+          - label: "Funcionalidades"
+            name: "features"
+            widget: "list"
+
+      - name: "evolution-preview"
+        label: "Vista previa de evolución"
+        file: "src/content/homepage/evolution-preview.json"
+        fields:
+          - { label: "Título de la sección", name: "heading", widget: "string" }
+          - { label: "Texto antes del ejemplo", name: "beforeIntro", widget: "string" }
+          - { label: "Ejemplo (antes)", name: "exampleBadge", widget: "string" }
+          - { label: "Texto después del ejemplo", name: "afterIntro", widget: "string" }
+          - { label: "Etiqueta de columnas", name: "columnsLabel", widget: "string" }
+          - label: "Filas"
+            name: "rows"
+            widget: "list"
+            fields:
+              - { label: "Etiqueta", name: "label", widget: "string" }
+              - { label: "Valores", name: "values", widget: "list" }
+          - { label: "Texto final", name: "footerText", widget: "string" }
+          - { label: "Nota final", name: "footerNote", widget: "string" }
+
+      - name: "disclaimer"
+        label: "Aviso sobre los datos"
+        file: "src/content/homepage/disclaimer.json"
+        fields:
+          - { label: "Título", name: "heading", widget: "string" }
+          - label: "Párrafos"
+            name: "paragraphs"
+            widget: "list"

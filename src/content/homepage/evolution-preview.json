@@ -1,0 +1,15 @@
+{
+  "heading": "¿Cómo ha evolucionado un aspirante?",
+  "beforeIntro": "En futuras versiones podrás pasar de ver únicamente:",
+  "exampleBadge": "Oposición 2026 · Nota: 8,42",
+  "afterIntro": "a disponer de una visión como:",
+  "columnsLabel": "2022 → 2024 → 2026",
+  "rows": [
+    { "label": "Nota oposición", "values": ["7,34", "8,12", "8,42"] },
+    { "label": "Méritos", "values": ["4,10", "5,03", "6,20"] },
+    { "label": "Posición", "values": ["534", "283", "117"] },
+    { "label": "Lista de interinos", "values": ["812", "421", "196"] }
+  ],
+  "footerText": "Una forma mucho más completa de entender la situación real de cada aspirante.",
+  "footerNote": "Ejemplo ilustrativo de una funcionalidad todavía en desarrollo."
+}
