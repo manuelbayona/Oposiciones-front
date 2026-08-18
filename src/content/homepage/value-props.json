@@ -1,0 +1,15 @@
+{
+  "heading": "Toda la convocatoria de un vistazo",
+  "description": "En lugar de consultar diferentes PDFs y listados oficiales, OpoData estructura la información para que puedas navegar fácilmente entre los resultados.",
+  "items": [
+    { "title": "Busca", "description": "Encuentra rápidamente a cualquier aspirante por su nombre." },
+    {
+      "title": "Ordena",
+      "description": "Ordena el tribunal por nota, puntuación final, méritos o cualquiera de los datos disponibles."
+    },
+    {
+      "title": "Consulta",
+      "description": "Accede al detalle de cada aspirante y revisa todas las pruebas, calificaciones y méritos publicados."
+    }
+  ]
+}

@@ -44,6 +44,7 @@ npm run typecheck    # comprobación de tipos sin emitir
 npm run test         # tests unitarios y de componentes (Vitest)
 npm run test:watch   # Vitest en modo watch
 npm run e2e          # tests end-to-end (Playwright)
+npm run cms          # servidor local del editor de contenido (ver más abajo)
 ```
 
 Cobertura de tests:
@@ -52,6 +53,38 @@ Cobertura de tests:
 npx vitest run --coverage
 ```
 
+## Edición del contenido de la portada
+
+Los textos de la portada (`Hero`, `IntroSection`, `ValueProps`, `FutureRoadmap`,
+`EvolutionPreview`, `DataDisclaimer`) no están escritos a mano en los componentes:
+cada uno lee de un fichero JSON en `src/content/homepage/`. Esto permite editarlos
+sin tocar código, con un editor visual ([Decap CMS](https://decapcms.org)) montado
+en `/admin`.
+
+**Edición local:**
+
+```bash
+npm run dev   # terminal 1 — servidor de la app
+npm run cms   # terminal 2 — proxy local de Decap CMS (puerto 8081)
+```
+
+Abre `http://localhost:5173/admin/index.html` (en desarrollo hace falta el
+`index.html` explícito; en producción `/admin/` resuelve solo, como se
+comprobó con `npm run build && npm run preview`). Los cambios que guardes se
+escriben directamente en los ficheros de `src/content/homepage/` como commits
+locales — no hace falta ninguna cuenta ni token mientras trabajes en local.
+
+**Desplegado:** el `backend:` de `public/admin/config.yml` está configurado
+para GitHub (`manuelbayona/oposiciones-front`, rama `main`). Para editar desde
+el sitio ya desplegado hace falta dar de alta una GitHub OAuth App y un pequeño
+proxy de autenticación (Decap lo documenta en
+[decapcms.org/docs/github-backend](https://decapcms.org/docs/github-backend/));
+hasta entonces, `/admin` en producción no permitirá iniciar sesión.
+
+Para añadir un campo nuevo a una sección existente: edítalo en el JSON
+correspondiente, en el componente que lo consume, y en
+`public/admin/config.yml` (mismo nombre de campo en los tres sitios).
+
 ## Estructura del proyecto
 
 Organización por funcionalidad, no por tipo técnico:
@@ -59,6 +92,8 @@ Organización por funcionalidad, no por tipo técnico:
 ```
 src/
   app/                  # router, layout raíz, query client
+  content/
+    homepage/           # copy de la portada editable vía /admin (Decap CMS)
   features/
     convocations/
     specialities/

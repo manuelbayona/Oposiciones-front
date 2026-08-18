@@ -1,0 +1,20 @@
+{
+  "heading": "Una oposición no empieza ni termina en una convocatoria",
+  "introParagraphs": [
+    "Una nota aislada cuenta solo una parte de la historia.",
+    "A medida que incorporemos más convocatorias, OpoData permitirá conocer la evolución de cada aspirante a lo largo de los años.",
+    "Podrás consultar cómo han cambiado sus resultados, sus méritos y su posición y entender mucho mejor su evolución dentro del proceso de oposición."
+  ],
+  "cardIntro": "La plataforma está diseñada para incorporar progresivamente nuevas fuentes de información.",
+  "featuresLabel": "Entre las próximas funcionalidades:",
+  "features": [
+    "Comparación de resultados con convocatorias anteriores.",
+    "Evolución de las notas de cada aspirante.",
+    "Evolución de méritos.",
+    "Posición obtenida en cada convocatoria.",
+    "Identificación de aspirantes que han obtenido plaza.",
+    "Evolución histórica dentro de las listas de interinidad.",
+    "Distancia respecto a la última plaza obtenida.",
+    "Estadísticas por tribunal y especialidad."
+  ]
+}
